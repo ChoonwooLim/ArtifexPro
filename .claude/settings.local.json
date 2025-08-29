@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp:*)",
+      "Bash(claude --debug)",
+      "WebSearch",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Read(C:\\WORK/**)",
+      "Bash(sqlite3:*)",
+      "Read(C:\\WORK\\TwinVerse/**)",
+      "Bash(pip show:*)",
+      "Bash(mcp-server-fetch:*)",
+      "WebFetch(domain:twinverse.org)",
+      "Read(C:\\WORK\\TwinVerse/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp/**)",
+      "Read(C:\\WORK\\TwinVerse/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp\\dist/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp/**)",
+      "Read(C:\\WORK\\TwinVerse\\twinverse-mcp\\dist/**)",
+      "Bash(set)",
+      "Bash(env)",
+      "Read(C:\\Users\\choon/**)",
+      "Read(C:\\Users\\choon/**)",
+      "Read(C:\\Users\\choon/**)",
+      "Bash(jq:*)",
+      "Read(C:\\Users\\choon/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
