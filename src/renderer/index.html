@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtifexPro Studio - Professional Video Editor</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/theme.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Custom Title Bar -->
+        <header id="titlebar">
+            <div class="titlebar-drag-region">
+                <div class="titlebar-logo">
+                    <img src="assets/logo.svg" alt="ArtifexPro">
+                    <span class="app-title">ArtifexPro Studio</span>
+                </div>
+                <div class="titlebar-controls">
+                    <button id="minimize-btn" class="control-btn">
+                        <svg width="10" height="1"><rect width="10" height="1"/></svg>
+                    </button>
+                    <button id="maximize-btn" class="control-btn">
+                        <svg width="10" height="10"><rect width="10" height="10" fill="none" stroke="currentColor"/></svg>
+                    </button>
+                    <button id="close-btn" class="control-btn close">
+                        <svg width="10" height="10"><path d="M0,0 L10,10 M10,0 L0,10" stroke="currentColor"/></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Application Layout -->
+        <div id="main-container">
+            <!-- Left Sidebar - Project & Media Browser -->
+            <aside id="left-sidebar" class="sidebar">
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" data-tab="project">Project</button>
+                    <button class="tab-btn" data-tab="media">Media</button>
+                    <button class="tab-btn" data-tab="effects">Effects</button>
+                </div>
+                <div class="sidebar-content">
+                    <div id="project-panel" class="panel active">
+                        <div class="panel-header">
+                            <h3>Project Files</h3>
+                            <button class="btn-icon" id="import-media">
+                                <svg><use href="#icon-plus"/></svg>
+                            </button>
+                        </div>
+                        <div id="project-tree" class="file-tree"></div>
+                    </div>
+                    <div id="media-panel" class="panel">
+                        <div class="media-grid" id="media-library"></div>
+                    </div>
+                    <div id="effects-panel" class="panel">
+                        <div class="effects-list" id="effects-library"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center - Main Work Area -->
+            <main id="workspace">
+                <!-- Preview Area -->
+                <div id="preview-container">
+                    <div class="preview-header">
+                        <div class="preview-tabs">
+                            <button class="preview-tab active">Source</button>
+                            <button class="preview-tab">Program</button>
+                        </div>
+                        <div class="preview-controls">
+                            <button class="btn-icon" id="preview-quality">
+                                <select>
+                                    <option value="full">Full</option>
+                                    <option value="half">1/2</option>
+                                    <option value="quarter">1/4</option>
+                                </select>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="video-preview">
+                        <canvas id="preview-canvas"></canvas>
+                        <div class="preview-overlay" id="preview-overlay"></div>
+                    </div>
+                    <div id="playback-controls">
+                        <button class="playback-btn" id="play-start">
+                            <svg><use href="#icon-skip-back"/></svg>
+                        </button>
+                        <button class="playback-btn" id="play-backward">
+                            <svg><use href="#icon-rewind"/></svg>
+                        </button>
+                        <button class="playback-btn main" id="play-pause">
+                            <svg><use href="#icon-play"/></svg>
+                        </button>
+                        <button class="playback-btn" id="play-forward">
+                            <svg><use href="#icon-fast-forward"/></svg>
+                        </button>
+                        <button class="playback-btn" id="play-end">
+                            <svg><use href="#icon-skip-forward"/></svg>
+                        </button>
+                        <div class="timecode" id="timecode">00:00:00:00</div>
+                    </div>
+                </div>
+
+                <!-- Timeline Area -->
+                <div id="timeline-container">
+                    <div class="timeline-header">
+                        <div class="timeline-tools">
+                            <button class="tool-btn active" data-tool="select">
+                                <svg><use href="#icon-cursor"/></svg>
+                            </button>
+                            <button class="tool-btn" data-tool="razor">
+                                <svg><use href="#icon-scissors"/></svg>
+                            </button>
+                            <button class="tool-btn" data-tool="hand">
+                                <svg><use href="#icon-hand"/></svg>
+                            </button>
+                            <div class="timeline-zoom">
+                                <button id="zoom-out">-</button>
+                                <input type="range" id="timeline-zoom" min="10" max="200" value="100">
+                                <button id="zoom-in">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="timeline">
+                        <div class="timeline-ruler" id="timeline-ruler"></div>
+                        <div class="timeline-tracks" id="timeline-tracks">
+                            <div class="track video-track" data-track="v1">
+                                <div class="track-header">V1</div>
+                                <div class="track-content"></div>
+                            </div>
+                            <div class="track video-track" data-track="v2">
+                                <div class="track-header">V2</div>
+                                <div class="track-content"></div>
+                            </div>
+                            <div class="track audio-track" data-track="a1">
+                                <div class="track-header">A1</div>
+                                <div class="track-content"></div>
+                            </div>
+                            <div class="track audio-track" data-track="a2">
+                                <div class="track-header">A2</div>
+                                <div class="track-content"></div>
+                            </div>
+                        </div>
+                        <div class="timeline-playhead" id="playhead"></div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Sidebar - Properties & AI Tools -->
+            <aside id="right-sidebar" class="sidebar">
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" data-tab="properties">Properties</button>
+                    <button class="tab-btn" data-tab="ai-tools">AI Tools</button>
+                    <button class="tab-btn" data-tab="color">Color</button>
+                </div>
+                <div class="sidebar-content">
+                    <div id="properties-panel" class="panel active">
+                        <div class="properties-content" id="properties-content">
+                            <p class="empty-state">Select an item to view properties</p>
+                        </div>
+                    </div>
+                    <div id="ai-tools-panel" class="panel">
+                        <div class="ai-section">
+                            <h3>AI Video Generation</h3>
+                            <div class="ai-input-group">
+                                <label>Mode:</label>
+                                <select id="ai-mode">
+                                    <option value="t2v">Text to Video</option>
+                                    <option value="i2v">Image to Video</option>
+                                    <option value="s2v">Speech to Video</option>
+                                </select>
+                            </div>
+                            <div class="ai-input-group">
+                                <label>Prompt:</label>
+                                <textarea id="ai-prompt" rows="4" placeholder="Describe your video..."></textarea>
+                            </div>
+                            <div class="ai-input-group">
+                                <label>Duration:</label>
+                                <input type="number" id="ai-duration" value="5" min="1" max="30"> seconds
+                            </div>
+                            <div class="ai-input-group">
+                                <label>Quality:</label>
+                                <select id="ai-quality">
+                                    <option value="standard">Standard (720p)</option>
+                                    <option value="high">High (1080p)</option>
+                                    <option value="ultra">Ultra (4K)</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" id="generate-video">Generate Video</button>
+                            <div id="generation-progress" class="progress-bar hidden">
+                                <div class="progress-fill"></div>
+                                <span class="progress-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="color-panel" class="panel">
+                        <div class="color-tools">
+                            <div class="color-wheels" id="color-wheels"></div>
+                            <div class="color-curves" id="color-curves"></div>
+                            <div class="color-presets">
+                                <h4>LUT Presets</h4>
+                                <div class="preset-grid" id="lut-presets"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Status Bar -->
+        <footer id="statusbar">
+            <div class="status-left">
+                <span id="status-message">Ready</span>
+            </div>
+            <div class="status-center">
+                <span id="project-name">Untitled Project</span>
+            </div>
+            <div class="status-right">
+                <span id="gpu-status">GPU: Active</span>
+                <span id="memory-usage">RAM: 4.2GB</span>
+                <span id="render-time">--:--</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SVG Icons -->
+    <svg style="display: none;">
+        <defs>
+            <symbol id="icon-play" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+            </symbol>
+            <symbol id="icon-pause" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </symbol>
+            <symbol id="icon-skip-back" viewBox="0 0 24 24">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+            </symbol>
+            <symbol id="icon-skip-forward" viewBox="0 0 24 24">
+                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+            </symbol>
+            <symbol id="icon-rewind" viewBox="0 0 24 24">
+                <path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/>
+            </symbol>
+            <symbol id="icon-fast-forward" viewBox="0 0 24 24">
+                <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+            </symbol>
+            <symbol id="icon-plus" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </symbol>
+            <symbol id="icon-cursor" viewBox="0 0 24 24">
+                <path d="M7 2l12 11.2-5.8.5-3.6 6.8-2.1-1.1L10.9 13 7 13z"/>
+            </symbol>
+            <symbol id="icon-scissors" viewBox="0 0 24 24">
+                <path d="M6 9c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm12 0c0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3-3 1.34-3 3z"/>
+            </symbol>
+            <symbol id="icon-hand" viewBox="0 0 24 24">
+                <path d="M20 12c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zM4 12c0 1.1.9 2 2 2s2-.9 2-2-.9-2-2-2-2 .9-2 2z"/>
+            </symbol>
+        </defs>
+    </svg>
+
+    <!-- Load Application Scripts -->
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>

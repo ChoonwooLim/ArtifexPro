@@ -1,96 +1,205 @@
 # Claude Development Notes
 
 ## Project Information
-- **Project Name**: TwinverseEng
-- **Location**: C:\Users\choon\TwinVerseEng
-- **Type**: Web Application (메타버스 플랫폼)
+- **Project Name**: ArtifexPro Studio
+- **Location**: C:\WORK\ArtifexPro
+- **Type**: AI 영상 생성/편집 플랫폼 (Node-based + Timeline)
+- **Architecture**: 3-Tier + Node System (온디바이스 우선, 클라우드 선택형)
 
 ## Development Commands
-- `npm start` - Start development server
-- `npm run dev` - Start with nodemon
-- `npm run build:all` - Complete optimization build
-- `npm run optimize:images` - Optimize images to WebP
-- `npm run build:minify` - Minify CSS/JS files
+- `npm run dev` - Start development server
+- `npm run build` - Production build
+- `npm run test` - Run tests
+- `npm run lint` - Lint code
+- `npm run typecheck` - Type checking
+- `python -m pytest` - Run Python tests
+- `python scripts/wan22_setup.py` - Setup Wan2.2 models
 
 ## Project Structure
-- `AutoShortsWeb/` - AI 비디오 편집 서브 프로젝트
-- `js/` - JavaScript modules
-- `css/` - Stylesheets
-- `image/` - Image assets (WebP 최적화 완료)
-- `*.min.*` - 압축된 파일들 (성능 최적화)
+- `src/` - Source code
+  - `core/` - 핵심 엔진 (Node Graph Engine, GPU Manager)
+  - `nodes/` - 노드 구현체 (Input, Process, Effect, Output 등)
+  - `wan22/` - Wan2.2 통합 모듈 (T2V, I2V, TI2V, S2V)
+  - `ui/` - UI 컴포넌트 (Timeline, Node Editor, AI Studio)
+  - `api/` - API 레이어
+  - `utils/` - 유틸리티 함수
+- `models/` - AI 모델 저장소 (Wan2.2 체크포인트)
+- `assets/` - 정적 자원
+- `tests/` - 테스트 코드
+- `scripts/` - 빌드 및 배포 스크립트
 
-## AI Collaboration Guidelines (자동 적용)
+## 기술 스택
 
-### 핵심 원칙
-1. **절대적 투명성** - 기술적 한계 먼저 설명, 경제적 투명성 보장
-2. **실용성 우선** - 실제 작동하는 기능만 구현, 데모 코드 금지
-3. **적응적 효율성** - 작업 복잡도에 따른 전략 선택
-4. **한국어 설명명 우선**
+### 프론트엔드
+- **Framework**: React/Vue.js + TypeScript
+- **UI Library**: Ant Design / Material-UI
+- **Node Editor**: React Flow / Rete.js
+- **Timeline**: Custom Canvas-based Timeline
+- **State Management**: Redux Toolkit / Zustand
+- **Video Player**: Video.js with custom controls
 
-### 작업 복잡도 전략
-- **단순 작업**: 병렬 처리로 속도 최적화
-- **복잡 작업**: 단계별 직렬 처리로 정확성 보장
+### 백엔드
+- **Runtime**: Node.js + Python (FastAPI)
+- **Database**: PostgreSQL + Redis
+- **Queue**: RabbitMQ / Celery
+- **Storage**: MinIO (S3 compatible)
+- **WebSocket**: Socket.io
 
-### 비용 투명성 프로토콜
-- 유료 서비스 필요시 사전 비용 공개
-- 무료 대안과 비교 분석 제공
-- 숨겨진 비용이나 추가 요금 투명 공개
+### AI/ML
+- **Wan2.2 Models**: 
+  - T2V-A14B (27B MoE, 14B active)
+  - I2V-A14B (27B MoE)
+  - TI2V-5B (5B Dense)
+  - S2V-14B
+- **Framework**: PyTorch 2.0+
+- **Optimization**: Flash Attention, xFormers, torch.compile
+- **Quantization**: BitsAndBytes, GPTQ
 
-### 전문가 AI 네트워크
-- 3회 시도 후 해결 안 되면 전문 AI 연결
-- 코딩: Claude-3.5-Sonnet, Cursor
-- 수학: Wolfram Alpha, GPT-4
-- 창작: Midjourney, DALL-E 3
+### GPU 최적화
+- **Multi-GPU**: FSDP, Ulysses Attention
+- **Memory**: CPU Offloading, Gradient Checkpointing
+- **Inference**: TensorRT, ONNX Runtime
 
-### 금지 행위
-- ❌ 가짜 구현 (작동하지 않는 코드)
-- ❌ 기술적 한계 숨김
-- ❌ 불필요한 시간 소모
-- ❌ 복잡한 작업에 강제 병렬 처리
+## 핵심 기능 모듈
 
-### 성공 지표
-- ✅ 제공된 모든 코드 즉시 실행 가능: 100%
-- ✅ 추가 수정 없이 바로 사용 가능
-- ✅ 예상 시간 내 작업 완료
-- ✅ 기술적 한계 사전 정확 예측
+### 1. Node Graph Engine (NGE)
+- 실시간 노드 처리 파이프라인
+- GPU 가속 프리뷰
+- 자동 타입 변환
+- 의존성 분석 및 병렬 처리
 
-## 코드 리뷰 수정 가이드라인 🛡️
+### 2. Wan2.2 Integration
+- 스마트 모델 로딩 (VRAM 기반 자동 최적화)
+- 품질 프리셋 (Draft, Preview, Production, Cinema)
+- 프롬프트 확장 및 스타일 인코딩
+- 멀티 GPU 분산 처리
 
-### 철저히 확인할 사항들
+### 3. Timeline Editor
+- 999 트랙 지원
+- 실시간 협업
+- 버전 관리 (Git LFS)
+- 자동 프록시 생성
 
-#### 1. **기존 기능 보존**
-- 모든 현재 작동하는 기능들이 그대로 유지되는지 확인
-- API 호출, UI 동작, 데이터 처리 등 모든 기능 테스트
-- 사용자 경험(UX)에 영향이 없는지 검증
+### 4. Render System
+- 로컬/클라우드 하이브리드 렌더링
+- 렌더 팜 통합 (SLURM)
+- 배치 처리 및 큐 관리
+- 자동 품질 체크
 
-#### 2. **디자인 무결성**
-- CSS 클래스나 스타일 변경이 다른 UI에 영향을 주지 않는지 확인
-- 레이아웃, 색상, 애니메이션 등 시각적 요소 보존
-- 반응형 디자인 유지
+## 개발 가이드라인
 
-#### 3. **안전한 수정 원칙**
-- 기존 코드를 삭제하기보다는 조건부 추가
-- 새로운 기능은 기존 기능과 독립적으로 구현
-- 충돌 가능성이 있는 부분은 사전에 경고
+### 코드 컨벤션
+- **Python**: PEP 8, Type Hints 필수
+- **TypeScript**: ESLint + Prettier
+- **Naming**: 
+  - 컴포넌트/클래스: PascalCase
+  - 함수/변수: camelCase
+  - 상수: UPPER_SNAKE_CASE
+  - 파일명: kebab-case
 
-#### 4. **변경 전후 비교**
-- 수정 전 코드의 동작 완벽히 이해
-- 수정 후 예상되는 영향 범위 분석
-- 사이드 이펙트 가능성 체크
+### 노드 개발 규칙
+```python
+class CustomNode(BaseNode):
+    """노드 개발 템플릿"""
+    
+    category = "process"  # input/generator/process/effect/output
+    inputs = {
+        'video': VideoStream,
+        'params': Dict[str, Any]
+    }
+    outputs = {
+        'video': VideoStream,
+        'metadata': Dict
+    }
+    
+    def process(self, inputs: Dict) -> Dict:
+        # GPU 처리 로직
+        pass
+```
 
-### 작업 프로세스 📋
-1. **코드 리뷰 내용 분석**
-2. **영향 범위 파악**
-3. **안전한 구현 방법 제시**
-4. **위험 요소 사전 경고**
-5. **단계별 신중한 수정**
+### 성능 최적화 체크리스트
+- [ ] GPU 메모리 프로파일링
+- [ ] 배치 처리 가능 여부 확인
+- [ ] 캐싱 전략 구현
+- [ ] 병렬 처리 최적화
+- [ ] 메모리 누수 체크
 
-> ⚠️ **중요**: 코드 리뷰 요청사항을 구현할 때는 **기존 기능과 디자인을 100% 보존**하면서 요청사항을 구현해야 합니다.
+### Git 워크플로우
+- Feature Branch: `feature/node-name`
+- Bugfix Branch: `bugfix/issue-number`
+- Release Branch: `release/v1.0.0`
+- Commit Message: `type(scope): description`
+  - feat: 새 기능
+  - fix: 버그 수정
+  - perf: 성능 개선
+  - refactor: 리팩토링
+  - docs: 문서 수정
+
+## 성능 벤치마크 타겟
+
+### Generation Speed (RTX 4090 기준)
+- T2V 720p 5s: < 2분
+- I2V 720p 5s: < 90초
+- TI2V 720p 5s: < 60초 (5B model)
+- S2V 720p 5s: < 2분
+
+### Memory Requirements
+- Minimum: 24GB VRAM
+- Optimal: 48GB VRAM
+- Enterprise: 80GB+ VRAM
+
+### Quality Metrics
+- Temporal Consistency: > 0.95
+- Motion Quality: > 0.92
+- Aesthetic Score: > 7.5/10
+
+## 환경 변수 설정
+```bash
+# Wan2.2 Models
+WAN22_MODEL_PATH=/models/wan22
+WAN22_CACHE_DIR=/cache/wan22
+
+# GPU Settings
+CUDA_VISIBLE_DEVICES=0,1
+TORCH_CUDA_ARCH_LIST=8.0;8.6;9.0
+
+# API Keys (필요시)
+HF_TOKEN=your_token_here
+
+# Performance
+ENABLE_FLASH_ATTENTION=true
+USE_XFORMERS=true
+TORCH_COMPILE=true
+```
+
+## 테스트 커맨드
+```bash
+# Unit Tests
+python -m pytest tests/unit -v
+
+# Integration Tests
+python -m pytest tests/integration -v
+
+# Node Tests
+python -m pytest tests/nodes -v
+
+# Wan2.2 Tests
+python -m pytest tests/wan22 -v --gpu
+
+# Performance Tests
+python scripts/benchmark.py --model t2v --quality production
+```
+
+## 디버깅 도구
+- GPU Monitor: `nvidia-smi -l 1`
+- Memory Profiler: `python -m memory_profiler`
+- Node Graph Visualizer: `npm run visualize`
+- Timeline Debugger: `npm run debug:timeline`
 
 ## Notes
-- 이 파일은 Claude가 프로젝트별 정보를 기억하는 데 사용됩니다
-- 중요한 개발 메모, 명령어, 프로젝트 세부사항을 추가하세요
-- **AI 협업 가이드라인은 모든 작업에 자동 적용됩니다**
+- 이 파일은 Claude가 ArtifexPro 프로젝트 정보를 기억하는 데 사용됩니다
+- Node-based 편집과 Wan2.2 AI 통합이 핵심 기능입니다
+- 온디바이스 처리를 우선하며, 필요시 클라우드 확장 가능합니다
 
 ## 클로드 코드에서의 mcp-installer를 사용한 MCP (Model Context Protocol) 설치 및 설정 가이드 
 공통 주의사항

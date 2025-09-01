@@ -1,35 +1,156 @@
-# Python
+######################
+# OS Generated Files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+###############
+# IDE/Editor #
+###############
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-*
+
+##########
+# Python #
+##########
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# C extensions
 *.so
-*.egg
-*.egg-info/
-dist/
-build/
-*.whl
+
+# Distribution / packaging
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
 env/
 venv/
-.env
-.venv
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
 
 # Jupyter Notebook
-.ipynb_checkpoints/
-*.ipynb_checkpoints
+.ipynb_checkpoints
+*.ipynb_checkpoints/
 
-# PyTorch/Model files
+# Sphinx documentation
+docs/_build/
+docs/site/
+
+##########
+# Node.js #
+##########
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Lock files (choose one strategy)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+####################
+# AI/ML Model Files #
+####################
+# PyTorch
 *.pth
 *.pt
-*.safetensors
-*.bin
 *.ckpt
-*.pkl
+
+# TensorFlow
+*.pb
 *.h5
+
+# ONNX
 *.onnx
 
-# Large model directories (too large for git)
-Wan2.2-*/
+# Safetensors
+*.safetensors
+
+# Other model formats
+*.bin
+*.pkl
+*.joblib
+*.model
+
+# Large model directories
+Wan2.2*/
 Wan2.2_*/
 */high_noise_model/
 */low_noise_model/
@@ -39,26 +160,44 @@ models_t5_*.pth
 Wan*.pth
 Wan*.VAE.pth
 
-# Output files
-output/
+###############
+# Media Files #
+###############
+# Video
 *.mp4
 *.avi
 *.mov
-*.gif
-*.png
-*.jpg
-*.jpeg
-*.webp
+*.wmv
+*.flv
+*.mkv
+*.webm
 
-# Node.js / Electron
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-package-lock.json
-yarn.lock
+# Images (usually we want to track some images)
+# Uncomment if you want to ignore all images
+# *.png
+# *.jpg
+# *.jpeg
+# *.gif
+# *.bmp
+# *.svg
+# *.ico
+# *.webp
 
-# Electron build output
+# Audio
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+
+# Generated output
+output/
+outputs/
+results/
+
+###########
+# Electron #
+###########
 app/dist/
 app/dist-electron/
 app/out/
@@ -71,61 +210,61 @@ app/out/
 *.AppImage
 *.snap
 
-# IDE / Editor
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-desktop.ini
+##################
+# Environment #
+##################
+.env
+.env.*
+!.env.example
+!.env.template
 
-# Logs
-*.log
-nohup.out
+##########
+# Logs #
+##########
 logs/
+*.log
 *.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+nohup.out
 
-# Test files
-test_*.mp4
-test_*.png
-temp/
+#############
+# Temporary #
+#############
 tmp/
-
-# Environment specific
-.env.local
-.env.development
-.env.production
-
-# Cache
-.cache/
+temp/
+*.tmp
+*.temp
 *.cache
-__pycache__/
-.pytest_cache/
+.cache/
 
-# OS files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Backup files
+################
+# Backup Files #
+################
 *.bak
 *.backup
 *.old
 *.orig
+*~
+*.swp
 
-# Generated documentation
-docs/_build/
-docs/site/
-
-# Sensitive data
+##################
+# Security/Keys #
+##################
 *.key
 *.pem
 *.crt
+*.cert
+*.p12
+*.pfx
 secrets/
 credentials/
+private/
+
+#########
+# Custom #
+#########
+# Add project-specific ignores below
+test_*.mp4
+test_*.png

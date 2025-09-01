@@ -30,7 +30,8 @@
       "Read(C:\\Users\\choon/**)",
       "Read(C:\\Users\\choon/**)",
       "Bash(jq:*)",
-      "Read(C:\\Users\\choon/**)"
+      "Read(C:\\Users\\choon/**)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []
