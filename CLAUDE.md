@@ -196,10 +196,337 @@ python scripts/benchmark.py --model t2v --quality production
 - Node Graph Visualizer: `npm run visualize`
 - Timeline Debugger: `npm run debug:timeline`
 
+## 🚀 듀얼 PC 개발 환경 구축 가이드
+
+### 개발 PC 정보
+- **Windows PC**: C:\WORK\ArtifexPro (메인 개발, UI/프론트엔드)
+- **Pop!_OS PC**: ~/ArtifexPro (AI/GPU 처리, 백엔드)
+- **SSH 연결**: Windows → Pop!_OS (설정 완료)
+
+### STEP 1: SSH 연결 설정 ✅
+
+#### 1.1 Pop!_OS에서 SSH 서버 설정
+```bash
+# SSH 서버 설치 및 시작
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl enable ssh
+sudo systemctl start ssh
+
+# 방화벽 허용
+sudo ufw allow ssh
+
+# IP 주소 확인 (예: 192.168.1.100)
+hostname -I
+```
+
+#### 1.2 Windows에서 SSH 키 생성
+```powershell
+# SSH 키 생성
+ssh-keygen -t rsa -b 4096
+# Enter 3번 (기본 경로, 패스프레이즈 없음)
+
+# 공개키 내용 복사
+type C:\Users\choon\.ssh\id_rsa.pub
+```
+
+#### 1.3 Pop!_OS에 공개키 등록
+```bash
+# stevenlim 사용자로 로그인 후
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+nano ~/.ssh/authorized_keys
+# Windows 공개키 붙여넣기, Ctrl+X, Y, Enter
+chmod 600 ~/.ssh/authorized_keys
+```
+
+#### 1.4 Windows SSH config 설정
+```powershell
+# C:\Users\choon\.ssh\config 파일 생성 (확장자 없음!)
+New-Item -Path C:\Users\choon\.ssh\config -ItemType File -Force
+notepad C:\Users\choon\.ssh\config
+```
+
+config 파일 내용:
+```
+Host popOS
+    HostName 192.168.1.100  # Pop!_OS IP 주소
+    User stevenlim
+    Port 22
+```
+
+테스트: `ssh popOS`
+
+### STEP 2: Git 저장소 설정
+
+#### 2.1 Windows에서 Git 초기화
+```powershell
+cd C:\WORK\ArtifexPro
+git init
+git add .
+git commit -m "Initial commit"
+
+# GitHub 원격 저장소 생성 후
+git remote add origin https://github.com/[username]/ArtifexPro.git
+git push -u origin main
+```
+
+#### 2.2 Pop!_OS에서 클론
+```bash
+cd ~
+git clone https://github.com/[username]/ArtifexPro.git
+cd ArtifexPro
+```
+
+### STEP 3: 개발 환경 구축
+
+#### 3.1 Pop!_OS 백엔드 환경
+```bash
+# Python 환경 설정
+cd ~/ArtifexPro
+python3 -m venv venv
+source venv/bin/activate
+
+# requirements.txt 생성
+cat > requirements.txt << EOF
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+torch==2.1.0
+transformers==4.35.0
+numpy==1.24.3
+opencv-python==4.8.1
+pillow==10.1.0
+redis==5.0.1
+celery==5.3.4
+pytest==7.4.3
+EOF
+
+pip install -r requirements.txt
+
+# 백엔드 서버 스크립트
+cat > start-backend.sh << 'EOF'
+#!/bin/bash
+cd ~/ArtifexPro
+source venv/bin/activate
+uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+EOF
+chmod +x start-backend.sh
+```
+
+#### 3.2 Windows 프론트엔드 환경
+```powershell
+cd C:\WORK\ArtifexPro
+
+# package.json 생성 (Pop!_OS 백엔드 연결)
+@"
+{
+  "name": "artifexpro-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://192.168.1.100:8000",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-flow-renderer": "^10.3.17",
+    "axios": "^1.6.0",
+    "socket.io-client": "^4.5.4"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@types/react": "^18.2.0",
+    "typescript": "^5.2.0",
+    "eslint": "^8.50.0"
+  }
+}
+"@ | Out-File -Encoding UTF8 package.json
+
+npm install
+```
+
+### STEP 4: 자동 동기화 설정
+
+#### 4.1 Pop!_OS 자동 pull 스크립트
+```bash
+cat > ~/sync-artifex.sh << 'EOF'
+#!/bin/bash
+cd ~/ArtifexPro
+while true; do
+    git pull origin main
+    sleep 10
+done
+EOF
+chmod +x ~/sync-artifex.sh
+```
+
+#### 4.2 Windows 자동 push 함수
+```powershell
+# PowerShell 프로필에 추가
+notepad $PROFILE
+
+# 추가할 내용:
+function Sync-ArtifexPro {
+    cd C:\WORK\ArtifexPro
+    git add .
+    git commit -m "Auto sync: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+    git push origin main
+}
+```
+
+### STEP 5: VS Code Remote 설정
+
+#### 5.1 Windows VS Code 설정
+1. VS Code 설치
+2. Remote-SSH 확장 설치
+3. `F1` → "Remote-SSH: Connect to Host" → `popOS` 선택
+4. Pop!_OS 파일 직접 편집 가능
+
+### STEP 6: 통합 개발 스크립트
+
+#### 6.1 Pop!_OS 통합 실행 스크립트
+```bash
+cat > ~/artifex-dev.sh << 'EOF'
+#!/bin/bash
+echo "ArtifexPro 백엔드 시작..."
+
+# tmux 세션 시작
+tmux new-session -d -s artifex
+
+# 백엔드 서버
+tmux send-keys -t artifex "cd ~/ArtifexPro && ./start-backend.sh" C-m
+
+# GPU 모니터링
+tmux new-window -t artifex -n gpu
+tmux send-keys -t artifex:gpu "watch -n 1 nvidia-smi" C-m
+
+# Git 동기화
+tmux new-window -t artifex -n sync
+tmux send-keys -t artifex:sync "~/sync-artifex.sh" C-m
+
+# 로그 모니터링
+tmux new-window -t artifex -n logs
+tmux send-keys -t artifex:logs "tail -f ~/ArtifexPro/logs/*.log" C-m
+
+echo "실행 완료! 접속: tmux attach -t artifex"
+EOF
+chmod +x ~/artifex-dev.sh
+```
+
+#### 6.2 Windows 통합 실행 함수
+```powershell
+# PowerShell 프로필에 추가
+function Start-ArtifexDev {
+    Write-Host "ArtifexPro 개발 환경 시작..." -ForegroundColor Green
+    
+    # Pop!_OS 백엔드 시작
+    Start-Process powershell -ArgumentList "ssh popOS '~/artifex-dev.sh'"
+    
+    # 3초 대기
+    Start-Sleep -Seconds 3
+    
+    # 로컬 프론트엔드 시작
+    cd C:\WORK\ArtifexPro
+    Start-Process powershell -ArgumentList "npm run dev"
+    
+    # VS Code 열기
+    code C:\WORK\ArtifexPro
+    
+    # 브라우저 열기
+    Start-Sleep -Seconds 5
+    Start-Process "http://localhost:3000"
+    
+    Write-Host "모든 서비스 실행 완료!" -ForegroundColor Green
+}
+
+# 종료 함수
+function Stop-ArtifexDev {
+    ssh popOS "tmux kill-session -t artifex"
+    Get-Process node | Stop-Process -Force
+    Write-Host "ArtifexPro 종료 완료" -ForegroundColor Yellow
+}
+```
+
+### STEP 7: 파일 동기화 (Syncthing)
+
+#### 7.1 양쪽 PC에 Syncthing 설치
+```powershell
+# Windows
+winget install Syncthing.Syncthing
+```
+
+```bash
+# Pop!_OS
+sudo apt install syncthing
+syncthing
+```
+
+#### 7.2 설정
+1. Windows: http://localhost:8384
+2. Pop!_OS: http://localhost:8384
+3. Device ID 교환
+4. ArtifexPro 폴더 공유 설정
+
+### STEP 8: 실행 및 테스트
+
+#### 전체 시작 (Windows PowerShell)
+```powershell
+Start-ArtifexDev
+```
+
+#### 개별 테스트
+```powershell
+# SSH 연결 테스트
+ssh popOS "echo 'Connection OK'"
+
+# 백엔드 API 테스트
+curl http://192.168.1.100:8000/health
+
+# Git 동기화 테스트
+Sync-ArtifexPro
+```
+
+#### 모니터링
+```bash
+# Pop!_OS에서
+tmux attach -t artifex
+# Ctrl+B, 숫자키로 창 전환
+```
+
+### 트러블슈팅
+
+#### SSH 연결 실패
+```powershell
+# Windows에서
+ssh -vvv popOS  # 디버그 모드
+ssh-keygen -R 192.168.1.100  # 기존 키 제거
+```
+
+#### Git 충돌
+```bash
+# Pop!_OS에서
+git stash
+git pull origin main
+git stash pop
+```
+
+#### 포트 충돌
+```bash
+# 사용 중인 포트 확인
+sudo lsof -i :8000
+sudo kill -9 [PID]
+```
+
 ## Notes
 - 이 파일은 Claude가 ArtifexPro 프로젝트 정보를 기억하는 데 사용됩니다
 - Node-based 편집과 Wan2.2 AI 통합이 핵심 기능입니다
 - 온디바이스 처리를 우선하며, 필요시 클라우드 확장 가능합니다
+- Windows(UI/프론트) + Pop!_OS(AI/백엔드) 듀얼 PC 개발 환경 구축 완료
 
 ## 클로드 코드에서의 mcp-installer를 사용한 MCP (Model Context Protocol) 설치 및 설정 가이드 
 공통 주의사항
