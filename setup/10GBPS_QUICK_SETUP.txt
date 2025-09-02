@@ -1,0 +1,95 @@
+=============================================
+🚀 10Gbps 직접 연결 빠른 설정
+=============================================
+Windows <--10Gbps--> Pop!_OS
+
+네트워크 구성:
+- Windows: 10.0.0.1
+- Pop!_OS: 10.0.0.2
+- MTU: 9000 (Jumbo Frame)
+
+=============================================
+【STEP 1: Windows 설정】
+=============================================
+
+1. set_10gbps_ip.bat 파일을 우클릭
+2. "관리자 권한으로 실행" 선택
+3. 설정 완료 메시지 확인
+
+또는 PowerShell (관리자):
+netsh interface ip set address "이더넷 3" static 10.0.0.1 255.255.255.0
+
+=============================================
+【STEP 2: Pop!_OS 설정】
+=============================================
+
+Pop!_OS 터미널에 복사/붙여넣기:
+
+echo "Jiyeon71391796!" | sudo -S bash -c '
+INTERFACE=$(ip link show | grep -E "^[0-9]+: enp" | head -1 | cut -d: -f2 | tr -d " ")
+cat > /etc/netplan/10-direct.yaml << EOF
+network:
+  version: 2
+  ethernets:
+    $INTERFACE:
+      dhcp4: no
+      addresses: [10.0.0.2/24]
+      mtu: 9000
+EOF
+netplan apply
+systemctl restart ssh
+ip addr show $INTERFACE | grep inet
+'
+
+=============================================
+【STEP 3: SSH 시작 (Pop!_OS)】
+=============================================
+
+Pop!_OS 터미널:
+
+echo "Jiyeon71391796!" | sudo -S bash -c "systemctl start ssh && systemctl enable ssh && ufw allow from 10.0.0.1"
+
+=============================================
+【STEP 4: 연결 테스트】
+=============================================
+
+Windows PowerShell:
+ping 10.0.0.2
+
+성공하면:
+ssh stevenlim@10.0.0.2
+
+또는:
+ssh popOS
+
+=============================================
+【문제 해결】
+=============================================
+
+Q: ping이 안 될 때
+A: Windows 방화벽 확인
+   Win + R → firewall.cpl → 방화벽 끄기
+
+Q: SSH 연결 안 될 때
+A: Pop!_OS에서:
+   sudo systemctl status ssh
+   sudo ufw status
+
+Q: IP 설정 확인
+A: Windows: ipconfig /all | findstr "이더넷 3" -A 5
+   Pop!_OS: ip addr show | grep 10.0.0
+
+=============================================
+【성능 테스트 (선택)】
+=============================================
+
+# iperf3로 10Gbps 속도 테스트
+Pop!_OS: 
+  sudo apt install iperf3
+  iperf3 -s
+
+Windows: 
+  iperf3 -c 10.0.0.2
+
+예상 속도: 9.5 Gbps 이상
+=============================================

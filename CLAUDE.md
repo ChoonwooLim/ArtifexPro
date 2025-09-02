@@ -208,6 +208,7 @@ python scripts/benchmark.py --model t2v --quality production
 ### 개발 PC 정보
 - **Windows PC**: C:\WORK\ArtifexPro (메인 개발, UI/프론트엔드)
 - **Pop!_OS PC**: ~/ArtifexPro (AI/GPU 처리, 백엔드)
+  - **로그인 정보**: username: `stevenlim` / password: `Jiyeon71391796!`
 - **SSH 연결**: Windows → Pop!_OS (설정 완료)
 
 ### STEP 1: SSH 연결 설정 ✅

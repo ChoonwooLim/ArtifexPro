@@ -523,41 +523,52 @@ export const ProfessionalApp: React.FC = () => {
             <div className="autoshorts-view">
               <Title level={2} className="view-title">VisionCut.AI</Title>
               <Card className="autoshorts-card">
-                <Tabs defaultActiveKey="1">
-                  <Tabs.TabPane tab="Auto Shorts" key="1">
-                    <Space direction="vertical" style={{ width: '100%' }} size="large">
-                      <TextArea 
-                        placeholder="Enter your script or topic..."
-                        rows={6}
-                        className="script-textarea"
-                      />
-                      <Select defaultValue="tiktok" style={{ width: '100%' }}>
-                        <Option value="tiktok">TikTok (9:16)</Option>
-                        <Option value="youtube">YouTube Shorts (9:16)</Option>
-                        <Option value="instagram">Instagram Reels (9:16)</Option>
-                      </Select>
-                      <Button type="primary" size="large" icon={<RobotOutlined />} block>
-                        Generate Auto Shorts
-                      </Button>
-                    </Space>
-                  </Tabs.TabPane>
-                  <Tabs.TabPane tab="AI Chat" key="2">
-                    <div className="chat-container">
-                      <div className="chat-messages">
-                        <div className="chat-message assistant">
-                          Hello! I'm VisionCut AI. How can I help you create amazing videos today?
+                <Tabs 
+                  defaultActiveKey="1"
+                  items={[
+                    {
+                      key: '1',
+                      label: 'Auto Shorts',
+                      children: (
+                        <Space direction="vertical" style={{ width: '100%' }} size="large">
+                          <TextArea 
+                            placeholder="Enter your script or topic..."
+                            rows={6}
+                            className="script-textarea"
+                          />
+                          <Select defaultValue="tiktok" style={{ width: '100%' }}>
+                            <Option value="tiktok">TikTok (9:16)</Option>
+                            <Option value="youtube">YouTube Shorts (9:16)</Option>
+                            <Option value="instagram">Instagram Reels (9:16)</Option>
+                          </Select>
+                          <Button type="primary" size="large" icon={<RobotOutlined />} block>
+                            Generate Auto Shorts
+                          </Button>
+                        </Space>
+                      )
+                    },
+                    {
+                      key: '2',
+                      label: 'AI Chat',
+                      children: (
+                        <div className="chat-container">
+                          <div className="chat-messages">
+                            <div className="chat-message assistant">
+                              Hello! I'm VisionCut AI. How can I help you create amazing videos today?
+                            </div>
+                          </div>
+                          <div className="chat-input">
+                            <Input.Search 
+                              placeholder="Ask me anything about video creation..."
+                              enterButton="Send"
+                              size="large"
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="chat-input">
-                        <Input.Search 
-                          placeholder="Ask me anything about video creation..."
-                          enterButton="Send"
-                          size="large"
-                        />
-                      </div>
-                    </div>
-                  </Tabs.TabPane>
-                </Tabs>
+                      )
+                    }
+                  ]}
+                />
               </Card>
             </div>
           )}
@@ -587,56 +598,71 @@ export const ProfessionalApp: React.FC = () => {
             <div className="effects-view">
               <Title level={2} className="view-title">Video Effects</Title>
               <Card className="effects-card">
-                <Tabs defaultActiveKey="filters">
-                  <Tabs.TabPane tab="Filters" key="filters">
-                    <div className="effects-grid">
-                      {['Vintage', 'Cyberpunk', 'Noir', 'Sunset', 'Cold', 'Warm'].map(filter => (
-                        <Card key={filter} hoverable className="effect-item">
-                          <div className="effect-preview" style={{ 
-                            background: `linear-gradient(135deg, #667eea, #764ba2)`,
-                            height: '100px',
-                            borderRadius: '8px',
-                            marginBottom: '8px'
-                          }} />
-                          <Text>{filter}</Text>
-                        </Card>
-                      ))}
-                    </div>
-                  </Tabs.TabPane>
-                  <Tabs.TabPane tab="Transitions" key="transitions">
-                    <div className="effects-grid">
-                      {['Fade', 'Slide', 'Zoom', 'Rotate', 'Blur', 'Glitch'].map(transition => (
-                        <Card key={transition} hoverable className="effect-item">
-                          <div className="effect-preview" style={{ 
-                            background: `linear-gradient(45deg, #00d4ff, #00ff88)`,
-                            height: '100px',
-                            borderRadius: '8px',
-                            marginBottom: '8px'
-                          }} />
-                          <Text>{transition}</Text>
-                        </Card>
-                      ))}
-                    </div>
-                  </Tabs.TabPane>
-                  <Tabs.TabPane tab="Audio" key="audio">
-                    <Space direction="vertical" style={{ width: '100%' }} size="large">
-                      <Card>
-                        <Title level={4}>Background Music</Title>
-                        <Upload>
-                          <Button icon={<AudioOutlined />}>Upload Music</Button>
-                        </Upload>
-                      </Card>
-                      <Card>
-                        <Title level={4}>Sound Effects</Title>
-                        <Space wrap>
-                          {['Whoosh', 'Impact', 'Click', 'Pop', 'Swoosh'].map(sound => (
-                            <Button key={sound}>{sound}</Button>
+                <Tabs 
+                  defaultActiveKey="filters"
+                  items={[
+                    {
+                      key: 'filters',
+                      label: 'Filters',
+                      children: (
+                        <div className="effects-grid">
+                          {['Vintage', 'Cyberpunk', 'Noir', 'Sunset', 'Cold', 'Warm'].map(filter => (
+                            <Card key={filter} hoverable className="effect-item">
+                              <div className="effect-preview" style={{ 
+                                background: `linear-gradient(135deg, #667eea, #764ba2)`,
+                                height: '100px',
+                                borderRadius: '8px',
+                                marginBottom: '8px'
+                              }} />
+                              <Text>{filter}</Text>
+                            </Card>
                           ))}
+                        </div>
+                      )
+                    },
+                    {
+                      key: 'transitions',
+                      label: 'Transitions',
+                      children: (
+                        <div className="effects-grid">
+                          {['Fade', 'Slide', 'Zoom', 'Rotate', 'Blur', 'Glitch'].map(transition => (
+                            <Card key={transition} hoverable className="effect-item">
+                              <div className="effect-preview" style={{ 
+                                background: `linear-gradient(45deg, #00d4ff, #00ff88)`,
+                                height: '100px',
+                                borderRadius: '8px',
+                                marginBottom: '8px'
+                              }} />
+                              <Text>{transition}</Text>
+                            </Card>
+                          ))}
+                        </div>
+                      )
+                    },
+                    {
+                      key: 'audio',
+                      label: 'Audio',
+                      children: (
+                        <Space direction="vertical" style={{ width: '100%' }} size="large">
+                          <Card>
+                            <Title level={4}>Background Music</Title>
+                            <Upload>
+                              <Button icon={<AudioOutlined />}>Upload Music</Button>
+                            </Upload>
+                          </Card>
+                          <Card>
+                            <Title level={4}>Sound Effects</Title>
+                            <Space wrap>
+                              {['Whoosh', 'Impact', 'Click', 'Pop', 'Swoosh'].map(sound => (
+                                <Button key={sound}>{sound}</Button>
+                              ))}
+                            </Space>
+                          </Card>
                         </Space>
-                      </Card>
-                    </Space>
-                  </Tabs.TabPane>
-                </Tabs>
+                      )
+                    }
+                  ]}
+                />
               </Card>
             </div>
           )}
@@ -732,34 +758,45 @@ export const ProfessionalApp: React.FC = () => {
             <div className="flow-view">
               <Title level={2} className="view-title">WAN Flow</Title>
               <Card className="flow-card">
-                <Tabs defaultActiveKey="workflow">
-                  <Tabs.TabPane tab="Workflow Builder" key="workflow">
-                    <div style={{ height: '60vh', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-                      <NodeEditor />
-                    </div>
-                  </Tabs.TabPane>
-                  <Tabs.TabPane tab="Templates" key="templates">
-                    <div className="templates-grid">
-                      {[
-                        'Music Video Pipeline',
-                        'TikTok Creator Pack',
-                        'YouTube Shorts Template',
-                        'Instagram Reels Builder',
-                        'Cinematic Sequence',
-                        'Product Showcase'
-                      ].map(template => (
-                        <Card key={template} hoverable>
-                          <Title level={4}>{template}</Title>
-                          <Text type="secondary">Pre-configured workflow for {template.toLowerCase()}</Text>
-                          <br />
-                          <Button type="primary" style={{ marginTop: '12px' }}>
-                            Use Template
-                          </Button>
-                        </Card>
-                      ))}
-                    </div>
-                  </Tabs.TabPane>
-                </Tabs>
+                <Tabs 
+                  defaultActiveKey="workflow"
+                  items={[
+                    {
+                      key: 'workflow',
+                      label: 'Workflow Builder',
+                      children: (
+                        <div style={{ height: '60vh', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                          <NodeEditor />
+                        </div>
+                      )
+                    },
+                    {
+                      key: 'templates',
+                      label: 'Templates',
+                      children: (
+                        <div className="templates-grid">
+                          {[
+                            'Music Video Pipeline',
+                            'TikTok Creator Pack',
+                            'YouTube Shorts Template',
+                            'Instagram Reels Builder',
+                            'Cinematic Sequence',
+                            'Product Showcase'
+                          ].map(template => (
+                            <Card key={template} hoverable>
+                              <Title level={4}>{template}</Title>
+                              <Text type="secondary">Pre-configured workflow for {template.toLowerCase()}</Text>
+                              <br />
+                              <Button type="primary" style={{ marginTop: '12px' }}>
+                                Use Template
+                              </Button>
+                            </Card>
+                          ))}
+                        </div>
+                      )
+                    }
+                  ]}
+                />
               </Card>
             </div>
           )}

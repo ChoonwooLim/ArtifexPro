@@ -208,14 +208,22 @@ export const SimpleGenerator: React.FC = () => {
     <div style={{ padding: 20 }}>
       <Title level={2}>ArtifexPro Video Generator</Title>
       
-      <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <Tabs.TabPane tab="Text+Image to Video (TI2V)" key="ti2v">
-          {ti2vTab}
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Sound to Video (S2V)" key="s2v">
-          {s2vTab}
-        </Tabs.TabPane>
-      </Tabs>
+      <Tabs 
+        activeKey={activeTab} 
+        onChange={setActiveTab}
+        items={[
+          {
+            key: 'ti2v',
+            label: 'Text+Image to Video (TI2V)',
+            children: ti2vTab
+          },
+          {
+            key: 's2v',
+            label: 'Sound to Video (S2V)',
+            children: s2vTab
+          }
+        ]}
+      />
 
       {/* 진행 상황 표시 */}
       {generating && currentJob && (

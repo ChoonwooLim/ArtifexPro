@@ -1,0 +1,85 @@
+========================================
+Pop!_OS에서 직접 실행할 명령어들
+========================================
+
+【1단계: 네트워크 확인】
+# IP 주소 확인
+ip addr show enp1s0f1
+
+# 네트워크 연결 확인
+ping -c 3 192.168.219.104  # Windows PC로 ping
+
+========================================
+【2단계: SSH 서비스 확인 및 시작】
+
+# SSH 서비스 상태 확인
+sudo systemctl status ssh
+
+# SSH 서비스가 꺼져있다면 시작
+sudo systemctl start ssh
+sudo systemctl enable ssh
+
+# SSH가 설치되지 않았다면 설치
+sudo apt update
+sudo apt install openssh-server
+
+========================================
+【3단계: 방화벽 확인】
+
+# 방화벽 상태 확인
+sudo ufw status
+
+# SSH 허용 (방화벽이 켜져있다면)
+sudo ufw allow ssh
+sudo ufw allow 22/tcp
+
+# 또는 방화벽 임시 비활성화 (테스트용)
+sudo ufw disable
+
+========================================
+【4단계: SSH 설정 확인】
+
+# SSH 설정 파일 확인
+sudo nano /etc/ssh/sshd_config
+
+# 다음 설정 확인:
+Port 22
+PermitRootLogin no
+PubkeyAuthentication yes
+PasswordAuthentication yes
+
+# 설정 변경 후 SSH 재시작
+sudo systemctl restart ssh
+
+========================================
+【5단계: 포트 확인】
+
+# SSH가 22번 포트에서 듣고 있는지 확인
+sudo netstat -tlnp | grep :22
+# 또는
+sudo ss -tlnp | grep :22
+
+========================================
+【6단계: 로그 확인】
+
+# SSH 로그 확인
+sudo journalctl -u ssh -n 50
+
+# 실시간 로그 모니터링
+sudo journalctl -u ssh -f
+
+========================================
+【한 번에 모두 실행 (복사해서 붙여넣기)】
+
+sudo apt update && sudo apt install -y openssh-server
+sudo systemctl enable ssh
+sudo systemctl start ssh
+sudo ufw allow ssh
+sudo systemctl status ssh
+ip addr show enp1s0f1 | grep inet
+sudo netstat -tlnp | grep :22
+
+========================================
+위 명령어 실행 후 Windows에서:
+ssh stevenlim@192.168.219.150
+========================================

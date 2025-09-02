@@ -541,184 +541,194 @@ const Wan22Professional: React.FC = () => {
 
           {/* Generation Settings */}
           <Card className="settings-card">
-            <Tabs defaultActiveKey="basic">
-              {/* @ts-ignore */}
-              <Tabs.TabPane tab="Basic Settings" key="basic">
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <label>Resolution</label>
-                    <Select value={resolution} onChange={setResolution} style={{ width: '100%' }}>
-                      {WAN22_MODELS[activeModel].resolution.map(res => (
-                        <Option key={res} value={res}>{res}</Option>
-                      ))}
-                    </Select>
-                  </div>
-                  
-                  <div className="setting-item">
-                    <label>Duration (seconds)</label>
-                    <InputNumber
-                      value={duration}
-                      onChange={(v) => setDuration(v || 5)}
-                      min={1}
-                      max={30}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                  
-                  <div className="setting-item">
-                    <label>FPS</label>
-                    <Select value={fps} onChange={setFps} style={{ width: '100%' }}>
-                      <Option value={8}>8 FPS</Option>
-                      <Option value={12}>12 FPS</Option>
-                      <Option value={16}>16 FPS</Option>
-                      <Option value={24}>24 FPS</Option>
-                      <Option value={30}>30 FPS</Option>
-                    </Select>
-                  </div>
-                  
-                  <div className="setting-item">
-                    <label>Sampling Steps</label>
-                    <Slider
-                      value={steps}
-                      onChange={setSteps}
-                      min={20}
-                      max={100}
-                      marks={{ 20: '20', 50: '50', 100: '100' }}
-                    />
-                  </div>
-                  
-                  <div className="setting-item">
-                    <label>CFG Scale</label>
-                    <Slider
-                      value={cfgScale}
-                      onChange={setCfgScale}
-                      min={1}
-                      max={20}
-                      step={0.5}
-                      marks={{ 1: '1', 7.5: '7.5', 20: '20' }}
-                    />
-                  </div>
-                  
-                  <div className="setting-item">
-                    <label>Seed</label>
-                    <InputNumber
-                      value={seed}
-                      onChange={(v) => setSeed(v || -1)}
-                      style={{ width: '100%' }}
-                      placeholder="-1 for random"
-                    />
-                  </div>
-                </div>
-              </Tabs.TabPane>
-              
-              {/* @ts-ignore */}
-              <Tabs.TabPane tab="Advanced" key="advanced">
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <div className="setting-group">
-                    <Title level={5}>Prompt Enhancement</Title>
-                    <Switch
-                      checked={usePromptExtension}
-                      onChange={setUsePromptExtension}
-                      checkedChildren="ON"
-                      unCheckedChildren="OFF"
-                    />
-                    {usePromptExtension && (
-                      <Select
-                        value={promptExtensionMethod}
-                        onChange={setPromptExtensionMethod}
-                        style={{ width: '100%', marginTop: 8 }}
-                      >
-                        <Option value="llm">LLM Enhancement</Option>
-                        <Option value="template">Template-based</Option>
-                        <Option value="artistic">Artistic Style</Option>
-                      </Select>
-                    )}
-                  </div>
-                  
-                  <div className="setting-group">
-                    <Title level={5}>Aesthetic Preset</Title>
-                    <Select
-                      value={aestheticPreset}
-                      onChange={setAestheticPreset}
-                      style={{ width: '100%' }}
-                    >
-                      <Option value="none">None</Option>
-                      <Option value="cinematic">Cinematic</Option>
-                      <Option value="documentary">Documentary</Option>
-                      <Option value="artistic">Artistic</Option>
-                      <Option value="commercial">Commercial</Option>
-                    </Select>
-                  </div>
-                  
-                  <div className="setting-group">
-                    <Title level={5}>Motion Control</Title>
-                    <label>Motion Strength</label>
-                    <Slider
-                      value={motionStrength}
-                      onChange={setMotionStrength}
-                      min={0}
-                      max={2}
-                      step={0.1}
-                      marks={{ 0: 'Static', 1: 'Normal', 2: 'Dynamic' }}
-                    />
-                    
-                    <label>Temporal Consistency</label>
-                    <Slider
-                      value={temporalConsistency}
-                      onChange={setTemporalConsistency}
-                      min={0}
-                      max={1}
-                      step={0.05}
-                      marks={{ 0: 'Low', 0.5: 'Medium', 1: 'High' }}
-                    />
-                  </div>
-                </Space>
-              </Tabs.TabPane>
-              
-              {/* @ts-ignore */}
-              <Tabs.TabPane tab="Optimization" key="optimization">
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <div className="optimization-settings">
-                    <Switch
-                      checked={useOffload}
-                      onChange={setUseOffload}
-                      checkedChildren="CPU Offload ON"
-                      unCheckedChildren="CPU Offload OFF"
-                    />
-                    <Switch
-                      checked={useFP16}
-                      onChange={setUseFP16}
-                      checkedChildren="FP16 ON"
-                      unCheckedChildren="FP16 OFF"
-                    />
-                    <Switch
-                      checked={useFlashAttention}
-                      onChange={setUseFlashAttention}
-                      checkedChildren="Flash Attention ON"
-                      unCheckedChildren="Flash Attention OFF"
-                    />
-                  </div>
-                  
-                  <div className="setting-item">
-                    <label>Batch Size</label>
-                    <InputNumber
-                      value={batchSize}
-                      onChange={(v) => setBatchSize(v || 1)}
-                      min={1}
-                      max={8}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                  
-                  <div className="info-box">
-                    <Title level={5}>Estimated Performance</Title>
-                    <Text>Time: {estimatedTime()}</Text>
-                    <br />
-                    <Text>VRAM Usage: ~{activeModel.includes('5B') ? '16GB' : '22GB'}</Text>
-                  </div>
-                </Space>
-              </Tabs.TabPane>
-            </Tabs>
+            <Tabs 
+              defaultActiveKey="basic"
+              items={[
+                {
+                  key: 'basic',
+                  label: 'Basic Settings',
+                  children: (
+                    <div className="settings-grid">
+                      <div className="setting-item">
+                        <label>Resolution</label>
+                        <Select value={resolution} onChange={setResolution} style={{ width: '100%' }}>
+                          {WAN22_MODELS[activeModel].resolution.map(res => (
+                            <Option key={res} value={res}>{res}</Option>
+                          ))}
+                        </Select>
+                      </div>
+                      
+                      <div className="setting-item">
+                        <label>Duration (seconds)</label>
+                        <InputNumber
+                          value={duration}
+                          onChange={(v) => setDuration(v || 5)}
+                          min={1}
+                          max={30}
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                      
+                      <div className="setting-item">
+                        <label>FPS</label>
+                        <Select value={fps} onChange={setFps} style={{ width: '100%' }}>
+                          <Option value={8}>8 FPS</Option>
+                          <Option value={12}>12 FPS</Option>
+                          <Option value={16}>16 FPS</Option>
+                          <Option value={24}>24 FPS</Option>
+                          <Option value={30}>30 FPS</Option>
+                        </Select>
+                      </div>
+                      
+                      <div className="setting-item">
+                        <label>Sampling Steps</label>
+                        <Slider
+                          value={steps}
+                          onChange={setSteps}
+                          min={20}
+                          max={100}
+                          marks={{ 20: '20', 50: '50', 100: '100' }}
+                        />
+                      </div>
+                      
+                      <div className="setting-item">
+                        <label>CFG Scale</label>
+                        <Slider
+                          value={cfgScale}
+                          onChange={setCfgScale}
+                          min={1}
+                          max={20}
+                          step={0.5}
+                          marks={{ 1: '1', 7.5: '7.5', 20: '20' }}
+                        />
+                      </div>
+                      
+                      <div className="setting-item">
+                        <label>Seed</label>
+                        <InputNumber
+                          value={seed}
+                          onChange={(v) => setSeed(v || -1)}
+                          style={{ width: '100%' }}
+                          placeholder="-1 for random"
+                        />
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  key: 'advanced',
+                  label: 'Advanced',
+                  children: (
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                      <div className="setting-group">
+                        <Title level={5}>Prompt Enhancement</Title>
+                        <Switch
+                          checked={usePromptExtension}
+                          onChange={setUsePromptExtension}
+                          checkedChildren="ON"
+                          unCheckedChildren="OFF"
+                        />
+                        {usePromptExtension && (
+                          <Select
+                            value={promptExtensionMethod}
+                            onChange={setPromptExtensionMethod}
+                            style={{ width: '100%', marginTop: 8 }}
+                          >
+                            <Option value="llm">LLM Enhancement</Option>
+                            <Option value="template">Template-based</Option>
+                            <Option value="artistic">Artistic Style</Option>
+                          </Select>
+                        )}
+                      </div>
+                      
+                      <div className="setting-group">
+                        <Title level={5}>Aesthetic Preset</Title>
+                        <Select
+                          value={aestheticPreset}
+                          onChange={setAestheticPreset}
+                          style={{ width: '100%' }}
+                        >
+                          <Option value="none">None</Option>
+                          <Option value="cinematic">Cinematic</Option>
+                          <Option value="documentary">Documentary</Option>
+                          <Option value="artistic">Artistic</Option>
+                          <Option value="commercial">Commercial</Option>
+                        </Select>
+                      </div>
+                      
+                      <div className="setting-group">
+                        <Title level={5}>Motion Control</Title>
+                        <label>Motion Strength</label>
+                        <Slider
+                          value={motionStrength}
+                          onChange={setMotionStrength}
+                          min={0}
+                          max={2}
+                          step={0.1}
+                          marks={{ 0: 'Static', 1: 'Normal', 2: 'Dynamic' }}
+                        />
+                        
+                        <label>Temporal Consistency</label>
+                        <Slider
+                          value={temporalConsistency}
+                          onChange={setTemporalConsistency}
+                          min={0}
+                          max={1}
+                          step={0.05}
+                          marks={{ 0: 'Low', 0.5: 'Medium', 1: 'High' }}
+                        />
+                      </div>
+                    </Space>
+                  )
+                },
+                {
+                  key: 'optimization',
+                  label: 'Optimization',
+                  children: (
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                      <div className="optimization-settings">
+                        <Switch
+                          checked={useOffload}
+                          onChange={setUseOffload}
+                          checkedChildren="CPU Offload ON"
+                          unCheckedChildren="CPU Offload OFF"
+                        />
+                        <Switch
+                          checked={useFP16}
+                          onChange={setUseFP16}
+                          checkedChildren="FP16 ON"
+                          unCheckedChildren="FP16 OFF"
+                        />
+                        <Switch
+                          checked={useFlashAttention}
+                          onChange={setUseFlashAttention}
+                          checkedChildren="Flash Attention ON"
+                          unCheckedChildren="Flash Attention OFF"
+                        />
+                      </div>
+                      
+                      <div className="setting-item">
+                        <label>Batch Size</label>
+                        <InputNumber
+                          value={batchSize}
+                          onChange={(v) => setBatchSize(v || 1)}
+                          min={1}
+                          max={8}
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                      
+                      <div className="info-box">
+                        <Title level={5}>Estimated Performance</Title>
+                        <Text>Time: {estimatedTime()}</Text>
+                        <br />
+                        <Text>VRAM Usage: ~{activeModel.includes('5B') ? '16GB' : '22GB'}</Text>
+                      </div>
+                    </Space>
+                  )
+                }
+              ]}
+            />
           </Card>
 
           {/* Action Buttons */}
