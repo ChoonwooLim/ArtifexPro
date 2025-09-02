@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Upload, Input, Select, Button, Progress, Checkbox, Tabs, Card, Space, Typography, App } from 'antd';
 import { 
   VideoCameraOutlined, 
@@ -15,7 +15,6 @@ import {
   PlayCircleOutlined,
   StopOutlined,
   SaveOutlined,
-  SettingOutlined
 } from '@ant-design/icons';
 import { apiService } from '../services/api';
 import NodeEditor from './NodeEditor';
@@ -37,7 +36,6 @@ export const ProfessionalApp: React.FC = () => {
   const [prompt, setPrompt] = useState('A cinematic sunset over mountain lake');
   const [imagePath, setImagePath] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
   const [lengthSec, setLengthSec] = useState(5);
   const [fps, setFps] = useState(24);
   const [quality, setQuality] = useState('balanced');
@@ -45,7 +43,7 @@ export const ProfessionalApp: React.FC = () => {
   const [phase, setPhase] = useState('Idle');
   const [progress, setProgress] = useState(0);
   const [eta, setEta] = useState('');
-  const [currentJob, setCurrentJob] = useState<any>(null);
+  const [, setCurrentJob] = useState<any>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   
   const logRef = useRef<HTMLTextAreaElement>(null);

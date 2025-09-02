@@ -1,8 +1,6 @@
 import React from 'react';
 import { Card, Button, Space, Divider, Typography, Progress, Tag } from 'antd';
 import {
-  VideoCameraOutlined,
-  PictureOutlined,
   AudioOutlined,
   FileImageOutlined,
   ExpandOutlined,

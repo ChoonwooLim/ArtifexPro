@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Upload, Input, Select, Button, Progress, Card, Space, Typography, 
-  Slider, Switch, Tooltip, Tag, Divider, Radio, InputNumber, App, Tabs
+  Slider, Switch, Tooltip, Tag, Radio, InputNumber, App, Tabs
 } from 'antd';
 import { 
-  VideoCameraOutlined, ThunderboltOutlined, UploadOutlined,
-  PlayCircleOutlined, StopOutlined, SaveOutlined, SettingOutlined,
-  InfoCircleOutlined, ExperimentOutlined, RocketOutlined,
-  AudioOutlined, PictureOutlined, FileTextOutlined, TranslationOutlined
+  PlayCircleOutlined, StopOutlined, SaveOutlined,
+  InfoCircleOutlined,
+  AudioOutlined, PictureOutlined, TranslationOutlined
 } from '@ant-design/icons';
 import { apiService } from '../services/api';
 import './Wan22Professional.css';
 
 const { TextArea } = Input;
 const { Option } = Select;
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 // const { TabPane } = Tabs; // Deprecated
 
 interface ModelConfig {
@@ -61,7 +60,13 @@ const WAN22_MODELS: Record<string, ModelConfig> = {
   }
 };
 
-const AESTHETIC_PRESETS = {
+const AESTHETIC_PRESETS: Record<string, {
+  lighting: string;
+  composition: string;
+  colorTone: string;
+  contrast: string;
+  saturation: string;
+}> = {
   'cinematic': {
     lighting: 'Dramatic',
     composition: 'Rule of thirds',
@@ -129,7 +134,7 @@ const Wan22Professional: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState('Ready');
   const [eta, setEta] = useState('');
-  const [currentJob, setCurrentJob] = useState<any>(null);
+  const [, setCurrentJob] = useState<any>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   
   const logRef = useRef<HTMLTextAreaElement>(null);
@@ -170,7 +175,7 @@ const Wan22Professional: React.FC = () => {
 
   // Calculate estimated time and VRAM
   const estimatedTime = useCallback(() => {
-    const model = WAN22_MODELS[activeModel];
+    // const model = WAN22_MODELS[activeModel]; // not used
     const baseTime = activeModel.includes('5B') ? 540 : 720; // seconds
     const frameCount = fps * duration;
     const stepMultiplier = steps / 50;
@@ -214,7 +219,7 @@ const Wan22Professional: React.FC = () => {
     if (logRef.current) {
       logRef.current.value = ''; // 기존 로그 지우기
     }
-    const timestamp = new Date().toLocaleTimeString();
+    // const timestamp = new Date().toLocaleTimeString(); // not used
     logMessage('========================================');
     logMessage(`Video Generation Started`);
     logMessage(`Model: ${activeModel.toUpperCase()}`);
@@ -402,7 +407,7 @@ const Wan22Professional: React.FC = () => {
                 </div>
                 <div className="model-features">
                   {model.features.map(f => (
-                    <Tag key={f} size="small">{f}</Tag>
+                    <Tag key={f}>{f}</Tag>
                   ))}
                 </div>
               </div>
@@ -429,7 +434,7 @@ const Wan22Professional: React.FC = () => {
                     if (prompt) {
                       try {
                         const result = await apiService.translateText(prompt);
-                        if (result.success && result.translated !== prompt) {
+                        if (result && result.translated !== prompt) {
                           setPrompt(result.translated);
                           message.success(`번역 완료: ${result.translated.substring(0, 50)}...`);
                         } else if (result.language === 'en') {

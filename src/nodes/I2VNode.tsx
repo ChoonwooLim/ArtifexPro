@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { Card, Input, Select, Slider, Upload, Button } from 'antd';
+import { Card, Select, Slider, Upload, Button } from 'antd';
 import { PictureOutlined, UploadOutlined } from '@ant-design/icons';
 
 interface I2VNodeData {

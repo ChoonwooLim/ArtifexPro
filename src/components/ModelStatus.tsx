@@ -7,7 +7,7 @@ import {
   WarningOutlined 
 } from '@ant-design/icons';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 interface ModelInfo {
   name: string;
