@@ -5,6 +5,7 @@
 - **Location**: C:\WORK\ArtifexPro
 - **Type**: AI 영상 생성/편집 플랫폼 (Node-based + Timeline)
 - **Architecture**: 3-Tier + Node System (온디바이스 우선, 클라우드 선택형)
+- **⚡ 듀얼 GPU 필수**: 모든 기능들에서 GPU 듀얼모드 반드시 사용 (2x RTX 3090, 48GB VRAM Total)
 
 ## Development Commands
 - `npm run dev` - Start development server
@@ -14,6 +15,7 @@
 - `npm run typecheck` - Type checking
 - `python -m pytest` - Run Python tests
 - `python scripts/wan22_setup.py` - Setup Wan2.2 models
+- `python backend/dual_gpu_api.py` - **듀얼 GPU 백엔드 시작 (Port 8002)**
 
 ## Project Structure
 - `src/` - Source code
@@ -55,10 +57,12 @@
 - **Optimization**: Flash Attention, xFormers, torch.compile
 - **Quantization**: BitsAndBytes, GPTQ
 
-### GPU 최적화
-- **Multi-GPU**: FSDP, Ulysses Attention
-- **Memory**: CPU Offloading, Gradient Checkpointing
-- **Inference**: TensorRT, ONNX Runtime
+### GPU 최적화 (듀얼 GPU 필수)
+- **Ray Cluster**: 듀얼 GPU 분산 처리 (2x RTX 3090)
+- **Multi-GPU**: FSDP, Ulysses Attention, Ray Remote Workers
+- **Memory**: CPU Offloading, Gradient Checkpointing, 48GB VRAM 활용
+- **Inference**: TensorRT, ONNX Runtime, Flash Attention 3
+- **Load Balancing**: 프레임 분할 병렬 처리
 
 ## 핵심 기능 모듈
 
@@ -68,11 +72,12 @@
 - 자동 타입 변환
 - 의존성 분석 및 병렬 처리
 
-### 2. Wan2.2 Integration
-- 스마트 모델 로딩 (VRAM 기반 자동 최적화)
+### 2. Wan2.2 Integration (듀얼 GPU 필수)
+- 스마트 모델 로딩 (VRAM 기반 자동 최적화, 48GB 활용)
 - 품질 프리셋 (Draft, Preview, Production, Cinema)
 - 프롬프트 확장 및 스타일 인코딩
-- 멀티 GPU 분산 처리
+- **Ray Cluster**: 비디오 프레임 분할 병렬 처리 (GPU-0: 전반부, GPU-1: 후반부)
+- **Flash Attention 3**: RTX 3090 최적화로 속도 향상
 
 ### 3. Timeline Editor
 - 999 트랙 지원
@@ -137,16 +142,18 @@ class CustomNode(BaseNode):
 
 ## 성능 벤치마크 타겟
 
-### Generation Speed (RTX 4090 기준)
-- T2V 720p 5s: < 2분
-- I2V 720p 5s: < 90초
-- TI2V 720p 5s: < 60초 (5B model)
-- S2V 720p 5s: < 2분
+### Generation Speed (듀얼 RTX 3090 기준)
+- T2V 720p 5s: < 90초 (듀얼 GPU 병렬 처리)
+- I2V 720p 5s: < 75초 (듀얼 GPU 병렬 처리)
+- TI2V 720p 5s: < 45초 (TI2V-5B + 듀얼 GPU)
+- S2V 720p 5s: < 90초 (S2V-14B + 듀얼 GPU)
 
-### Memory Requirements
-- Minimum: 24GB VRAM
-- Optimal: 48GB VRAM
-- Enterprise: 80GB+ VRAM
+### Memory Requirements (듀얼 GPU 구성)
+- **Current Setup**: 48GB VRAM (2x RTX 3090 24GB)
+- **Load Balancing**: Ray 클러스터로 자동 메모리 분배
+- **Minimum**: 24GB VRAM (싱글 GPU 폴백 모드, 권장하지 않음)
+- **Optimal**: 48GB VRAM (현재 구성, 듀얼 GPU 병렬 처리)
+- **Enterprise**: 80GB+ VRAM (향후 확장)
 
 ### Quality Metrics
 - Temporal Consistency: > 0.95
@@ -522,11 +529,118 @@ sudo lsof -i :8000
 sudo kill -9 [PID]
 ```
 
+## ⚡ 듀얼 GPU 아키텍처
+
+### GPU 구성
+- **GPU 0**: RTX 3090 24GB (cuda:0)
+- **GPU 1**: RTX 3090 24GB (cuda:1)
+- **Total VRAM**: 48GB
+- **Ray Cluster**: 2개 GPU 워커로 분산 처리
+
+### 병렬 처리 방식
+1. **프레임 분할**: 총 프레임을 절반으로 나누어 각 GPU에 할당
+2. **GPU 0**: 전반부 프레임 (0 ~ mid_frame)
+3. **GPU 1**: 후반부 프레임 (mid_frame ~ total_frames)
+4. **병렬 실행**: Ray의 future로 두 GPU가 동시 처리
+5. **결과 병합**: 완료 후 결과를 하나로 통합
+
+### 핵심 코드
+```python
+# Ray 클러스터 초기화
+ray.init(ignore_reinit_error=True, num_gpus=2)
+
+@ray.remote(num_gpus=1)
+class GPUWorker:
+    def __init__(self, gpu_id: int):
+        self.device = torch.device(f"cuda:{gpu_id}")
+
+# 듀얼 GPU 워커
+gpu_worker_0 = GPUWorker.remote(0)
+gpu_worker_1 = GPUWorker.remote(1)
+
+# 병렬 처리
+future1 = gpu_worker_0.process_video_chunk.remote(0, mid_frame, params)
+future2 = gpu_worker_1.process_video_chunk.remote(mid_frame, total_frames, params)
+result1, result2 = ray.get([future1, future2])
+```
+
+## 🔥 실제 WAN2.2 모델 위치 (중요! 반드시 확인!)
+
+### Windows PC (C:\WORK\ArtifexPro)
+```
+C:\WORK\ArtifexPro\
+├── Wan2.2-T2V-A14B\            # Text-to-Video 14B 모델
+│   ├── models_t5_umt5-xxl-enc-bf16.pth (11.3GB)
+│   ├── Wan2.1_VAE.pth (507MB)
+│   ├── high_noise_model\
+│   └── low_noise_model\
+├── Wan2.2-I2V-A14B\            # Image-to-Video 14B 모델  
+│   ├── high_noise_model\
+│   └── assets\
+├── Wan2.2-TI2V-5B\             # Text/Image-to-Video 5B 모델 ⭐
+│   ├── diffusion_pytorch_model-00001-of-00003.safetensors (9.8GB)
+│   ├── diffusion_pytorch_model-00002-of-00003.safetensors (9.9GB)
+│   ├── diffusion_pytorch_model-00003-of-00003.safetensors (178MB)
+│   ├── models_t5_umt5-xxl-enc-bf16.pth (11.3GB)
+│   └── Wan2.2_VAE.pth (2.8GB)
+├── Wan2.2-S2V-14B\             # Sound-to-Video 14B 모델
+│   ├── diffusion_pytorch_model-00001-of-00004.safetensors (9.9GB)
+│   ├── diffusion_pytorch_model-00002-of-00004.safetensors (9.8GB)
+│   ├── diffusion_pytorch_model-00003-of-00004.safetensors (9.9GB)
+│   ├── diffusion_pytorch_model-00004-of-00004.safetensors (2.7GB)
+│   └── Wan2.1_VAE.pth (507MB)
+└── Wan2.2\                     # WAN2.2 코어 라이브러리
+    └── wan\
+        └── configs\
+            ├── wan_ti2v_5B.py
+            ├── wan_t2v_A14B.py
+            ├── wan_i2v_A14B.py
+            └── wan_s2v_14B.py
+```
+
+### Pop!_OS PC (~/ArtifexPro/models)
+```
+/home/stevenlim/ArtifexPro/
+└── models/
+    ├── Wan2.2-TI2V-5B/         # TI2V 5B 모델 ⭐
+    │   ├── diffusion_pytorch_model-00001-of-00003.safetensors
+    │   ├── diffusion_pytorch_model-00002-of-00003.safetensors
+    │   ├── diffusion_pytorch_model-00003-of-00003.safetensors
+    │   ├── models_t5_umt5-xxl-enc-bf16.pth
+    │   └── Wan2.2_VAE.pth
+    └── Wan2.2-S2V-14B/         # S2V 14B 모델
+        ├── diffusion_pytorch_model-00001-of-00004.safetensors
+        ├── diffusion_pytorch_model-00002-of-00004.safetensors
+        ├── diffusion_pytorch_model-00003-of-00004.safetensors
+        ├── diffusion_pytorch_model-00004-of-00004.safetensors
+        └── Wan2.1_VAE.pth
+```
+
+## 💡 중요 파일들
+
+### 실제 모델 추론 코드
+- `backend/wan22_actual_inference.py` - 실제 WAN2.2 모델 로드 및 추론
+- `backend/wan22_real_inference.py` - WAN2.2 실제 모델 추론 모듈
+- `backend/wan22_optimized.py` - 최적화된 WAN2.2 추론
+- `backend/real_video_generator.py` - 실제 AI 비디오 생성 모듈
+
+### 분산 처리 백엔드
+- `backend/distributed_gpu_api.py` - Windows + Pop!_OS 분산 GPU 처리 (포트 8003)
+- `backend/dual_gpu_api.py` - 듀얼 GPU 백엔드 (포트 8002)
+- `backend/simple_api.py` - 기본 API 서버 (포트 8001)
+
+### 프론트엔드
+- `src/components/Wan22Professional.tsx` - WAN2.2 전문가 UI
+- `src/services/api.ts` - API 서비스 (분산 GPU 지원)
+
 ## Notes
 - 이 파일은 Claude가 ArtifexPro 프로젝트 정보를 기억하는 데 사용됩니다
+- **⚡ 모든 기능들에서 GPU 듀얼모드를 반드시 사용해야 합니다**
 - Node-based 편집과 Wan2.2 AI 통합이 핵심 기능입니다
 - 온디바이스 처리를 우선하며, 필요시 클라우드 확장 가능합니다
 - Windows(UI/프론트) + Pop!_OS(AI/백엔드) 듀얼 PC 개발 환경 구축 완료
+- Ray Cluster로 2x RTX 3090 GPU를 활용한 병렬 처리 필수
+- **실제 WAN2.2 모델들이 이미 다운로드되어 있음! 위 경로 참조!**
 
 ## 클로드 코드에서의 mcp-installer를 사용한 MCP (Model Context Protocol) 설치 및 설정 가이드 
 공통 주의사항

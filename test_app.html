@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ArtifexPro Test</title>
+    <style>
+        body { 
+            background: #1a1a2e; 
+            color: white; 
+            font-family: Arial; 
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .status { 
+            background: #0f0f1e; 
+            padding: 20px; 
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .ok { color: #00ff88; }
+        .error { color: #ff4444; }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ArtifexPro 시스템 체크</h1>
+        
+        <div class="status">
+            <h2>서비스 상태</h2>
+            <p id="frontend">Frontend: 확인 중...</p>
+            <p id="backend">Backend: 확인 중...</p>
+            <p id="translate">번역 API: 확인 중...</p>
+        </div>
+        
+        <div class="status">
+            <h2>테스트</h2>
+            <button onclick="testTranslation()">번역 테스트</button>
+            <button onclick="openApp()">앱 열기</button>
+            <button onclick="location.reload()">새로고침</button>
+        </div>
+        
+        <div class="status">
+            <h2>로그</h2>
+            <pre id="log"></pre>
+        </div>
+    </div>
+    
+    <script>
+        const log = (msg) => {
+            const logEl = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logEl.textContent += `[${time}] ${msg}\n`;
+        };
+        
+        // Check frontend
+        fetch('http://localhost:3000')
+            .then(r => {
+                document.getElementById('frontend').innerHTML = 'Frontend: <span class="ok">✓ 실행 중 (포트 3000)</span>';
+                log('Frontend 정상');
+            })
+            .catch(e => {
+                document.getElementById('frontend').innerHTML = 'Frontend: <span class="error">✗ 오프라인</span>';
+                log('Frontend 연결 실패');
+            });
+        
+        // Check backend
+        fetch('http://localhost:8001/')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('backend').innerHTML = 'Backend: <span class="ok">✓ 실행 중 (포트 8001)</span>';
+                log('Backend 정상: ' + data.status);
+            })
+            .catch(e => {
+                document.getElementById('backend').innerHTML = 'Backend: <span class="error">✗ 오프라인</span>';
+                log('Backend 연결 실패');
+            });
+        
+        // Test translation
+        async function testTranslation() {
+            log('번역 테스트 시작...');
+            const formData = new FormData();
+            formData.append('text', '아름다운 일몰');
+            formData.append('target_lang', 'en');
+            
+            try {
+                const response = await fetch('http://localhost:8001/api/translate', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                document.getElementById('translate').innerHTML = '번역 API: <span class="ok">✓ 작동 중</span>';
+                log(`번역 성공: "${result.original}" → "${result.translated}"`);
+                alert(`번역 결과: ${result.translated}`);
+            } catch(e) {
+                document.getElementById('translate').innerHTML = '번역 API: <span class="error">✗ 오류</span>';
+                log('번역 실패: ' + e.message);
+            }
+        }
+        
+        function openApp() {
+            window.open('http://localhost:3000', '_blank');
+        }
+        
+        log('시스템 체크 시작');
+    </script>
+</body>
+</html>

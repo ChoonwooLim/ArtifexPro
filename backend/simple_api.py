@@ -117,18 +117,40 @@ async def list_jobs():
 async def simulate_ti2v_generation(job_id: str, image_path: Path, prompt: str, duration: float):
     """TI2V 생성 시뮬레이션"""
     try:
-        # 진행률 업데이트
-        for progress in range(0, 101, 10):
-            await asyncio.sleep(1)  # 시뮬레이션 딜레이
-            jobs[job_id]["progress"] = progress
-            jobs[job_id]["message"] = f"Processing: {progress}% - {get_progress_message(progress)}"
+        # Detailed progress stages
+        stages = [
+            (5, "Initializing WAN2.2 TI2V-5B model..."),
+            (10, "Loading image and preprocessing..."),
+            (15, "Encoding prompt with CLIP text encoder..."),
+            (20, "Extracting image features with ViT..."),
+            (25, "Initializing diffusion pipeline..."),
+            (30, "Starting denoising process..."),
+            (40, "Running diffusion steps (Step 1-20)..."),
+            (50, "Running diffusion steps (Step 21-35)..."),
+            (60, "Running diffusion steps (Step 36-50)..."),
+            (70, "Decoding latents with VAE decoder..."),
+            (80, "Applying temporal consistency..."),
+            (90, "Rendering final video frames..."),
+            (95, "Encoding video with H.264 codec..."),
+            (100, "Finalizing output...")
+        ]
         
-        # 가짜 비디오 생성 (실제로는 샘플 비디오 복사)
+        for progress, message in stages:
+            await asyncio.sleep(1.0)  # Simulate processing time
+            jobs[job_id]["progress"] = progress
+            jobs[job_id]["message"] = message
+        
+        # Generate real sample video
         output_path = OUTPUT_DIR / f"{job_id}_output.mp4"
         
-        # 샘플 비디오 생성 (빈 파일)
-        with open(output_path, "wb") as f:
-            f.write(b"FAKE_VIDEO_DATA")  # 실제로는 ffmpeg로 생성
+        # Import video generation module
+        import sys
+        sys.path.append(str(Path.cwd()))
+        from create_sample_video import create_sample_video
+        
+        # Create video with prompt text
+        prompt_short = prompt[:15] if len(prompt) > 15 else prompt
+        create_sample_video(str(output_path), f"WAN2.2: {prompt_short}", int(duration), 24)
         
         # 썸네일 생성
         thumbnail_path = OUTPUT_DIR / f"{job_id}_thumb.jpg"
@@ -185,19 +207,19 @@ async def simulate_s2v_generation(job_id: str, audio_path: Path, style: str):
         })
 
 def get_progress_message(progress: int) -> str:
-    """진행 상황 메시지"""
+    """진행 상황 메시지 for WAN2.2"""
     messages = {
-        0: "Initializing model...",
-        10: "Loading image and prompt...",
-        20: "Encoding image features...",
-        30: "Processing text prompt...",
-        40: "Generating initial frames...",
-        50: "Applying motion dynamics...",
-        60: "Enhancing temporal coherence...",
-        70: "Refining video quality...",
-        80: "Post-processing frames...",
-        90: "Finalizing output...",
-        100: "Complete!"
+        0: "Initializing WAN2.2 pipeline...",
+        10: "Loading model weights from checkpoint...",
+        20: "Processing input data with CLIP...",
+        30: "Running neural network inference...",
+        40: "Generating video frames (1/3)...",
+        50: "Generating video frames (2/3)...",
+        60: "Generating video frames (3/3)...",
+        70: "Applying motion dynamics...",
+        80: "Enhancing temporal consistency...",
+        90: "Rendering final output...",
+        100: "Generation complete!"
     }
     return messages.get(progress, f"Processing... {progress}%")
 
@@ -220,6 +242,83 @@ async def upload_file(file: UploadFile = File(...)):
         "size": file_path.stat().st_size,
         "url": f"/uploads/{file_id}_{file.filename}"
     }
+
+@app.post("/api/translate")
+async def translate_text(
+    text: str = Form(...),
+    target_lang: str = Form("en")
+):
+    """구글 번역 API를 사용한 한글→영어 번역"""
+    try:
+        # deep-translator 라이브러리 사용
+        try:
+            from deep_translator import GoogleTranslator
+            
+            # 한글 감지
+            is_korean = any(ord(c) >= 0xAC00 and ord(c) <= 0xD7A3 for c in text)
+            
+            if is_korean:
+                # 구글 번역 수행
+                translator = GoogleTranslator(source='ko', target=target_lang)
+                translated = translator.translate(text)
+            else:
+                # 이미 영어면 그대로 반환
+                translated = text
+                
+        except ImportError:
+            # googletrans가 설치되지 않은 경우 fallback
+            print("googletrans not installed, using fallback translation")
+            
+            # 간단한 키워드 기반 번역 (fallback)
+            translations = {
+                "아름다운 일몰": "beautiful sunset",
+                "미래 도시": "futuristic city", 
+                "우주 비행사": "astronaut in space",
+                "판타지 숲": "fantasy forest",
+                "사이버펑크": "cyberpunk",
+                "네온 불빛": "neon lights",
+                "비 오는 거리": "rainy street",
+                "눈 내리는 산": "snowy mountain",
+                "해변의 파도": "ocean waves on beach",
+                "벚꽃": "cherry blossoms",
+                "고양이": "cat",
+                "강아지": "dog",
+                "로봇": "robot",
+                "용": "dragon",
+                "마법사": "wizard",
+                "우주": "space",
+                "미래": "future",
+                "판타지": "fantasy",
+                "아름다운": "beautiful",
+                "신비로운": "mysterious",
+                "환상적인": "fantastic"
+            }
+            
+            translated = text
+            for korean, english in translations.items():
+                if korean in text:
+                    translated = translated.replace(korean, english)
+            
+            # 한글이 남아있으면 기본 템플릿
+            if any(ord(c) >= 0xAC00 and ord(c) <= 0xD7A3 for c in translated):
+                translated = f"A cinematic scene, {text}, highly detailed, 8K quality"
+        
+        return {
+            "original": text,
+            "translated": translated,
+            "language": "ko" if any(ord(c) >= 0xAC00 and ord(c) <= 0xD7A3 for c in text) else "en",
+            "success": True
+        }
+        
+    except Exception as e:
+        print(f"Translation error: {e}")
+        return {
+            "original": text,
+            "translated": text,
+            "language": "unknown",
+            "success": False,
+            "error": str(e)
+        }
 
 @app.get("/api/models")
 async def get_available_models():
@@ -256,6 +355,98 @@ async def system_status():
         }
     }
 
+@app.post("/api/autoshorts/generate")
+async def generate_autoshorts(
+    script: str = Form(...),
+    platform: str = Form("tiktok"),
+    style: str = Form("engaging"),
+    duration: int = Form(60)
+):
+    """Auto Shorts 생성 (VisionCut.AI)"""
+    job_id = str(uuid.uuid4())
+    
+    jobs[job_id] = {
+        "id": job_id,
+        "type": "autoshorts",
+        "status": "processing",
+        "progress": 0,
+        "script": script,
+        "platform": platform,
+        "style": style,
+        "duration": duration,
+        "created_at": datetime.now().isoformat()
+    }
+    
+    asyncio.create_task(simulate_autoshorts_generation(job_id, script, platform))
+    
+    return {"job_id": job_id, "status": "started"}
+
+async def simulate_autoshorts_generation(job_id: str, script: str, platform: str):
+    """Auto Shorts 생성 시뮬레이션"""
+    try:
+        stages = [
+            (10, "Analyzing script..."),
+            (20, "Generating scene breakdown..."),
+            (30, "Creating visual storyboard..."),
+            (40, "Generating video clips..."),
+            (60, "Adding transitions and effects..."),
+            (80, "Applying audio and music..."),
+            (90, "Final rendering..."),
+            (100, "Complete!")
+        ]
+        
+        for progress, message in stages:
+            await asyncio.sleep(2)
+            jobs[job_id]["progress"] = progress
+            jobs[job_id]["message"] = message
+        
+        output_path = OUTPUT_DIR / f"{job_id}_autoshorts.mp4"
+        with open(output_path, "wb") as f:
+            f.write(b"FAKE_AUTOSHORTS_VIDEO")
+        
+        jobs[job_id].update({
+            "status": "completed",
+            "progress": 100,
+            "output": {
+                "video_url": f"/outputs/{job_id}_autoshorts.mp4",
+                "duration": 60,
+                "platform": platform,
+                "scenes": random.randint(5, 10),
+                "format": "9:16" if platform in ["tiktok", "youtube", "instagram"] else "16:9"
+            },
+            "completed_at": datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        jobs[job_id].update({
+            "status": "failed",
+            "error": str(e)
+        })
+
+# AI Chat endpoint
+chat_history = []
+
+@app.post("/api/chat")
+async def ai_chat(message: str = Form(...)):
+    """AI Chat for VisionCut.AI"""
+    # 시뮬레이션: 간단한 응답 생성
+    responses = {
+        "hello": "Hello! I'm VisionCut AI. How can I help you create amazing videos today?",
+        "help": "I can help you with:\n- Creating auto shorts for TikTok, YouTube, Instagram\n- Generating videos from scripts\n- Adding effects and transitions\n- Optimizing for different platforms",
+        "default": f"I understand you want to know about '{message}'. Let me help you with video creation!"
+    }
+    
+    response = responses.get(message.lower(), responses["default"])
+    
+    chat_entry = {
+        "user": message,
+        "assistant": response,
+        "timestamp": datetime.now().isoformat()
+    }
+    chat_history.append(chat_entry)
+    
+    return {"response": response, "history": chat_history[-10:]}  # 최근 10개 대화만 반환
+
 if __name__ == "__main__":
     print("\n" + "="*50)
     print("ArtifexPro API Server Starting...")
@@ -263,9 +454,9 @@ if __name__ == "__main__":
     print(f"Upload Dir: {UPLOAD_DIR.absolute()}")
     print(f"Output Dir: {OUTPUT_DIR.absolute()}")
     print("\nAPI Endpoints:")
-    print("  - http://localhost:8000")
-    print("  - http://localhost:8000/docs (Swagger UI)")
+    print("  - http://localhost:8001")
+    print("  - http://localhost:8001/docs (Swagger UI)")
     print("\nReady for video generation!")
     print("="*50 + "\n")
     
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

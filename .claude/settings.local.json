@@ -43,7 +43,18 @@
       "Read(C:\\WORK\\Artifex.AI\\app/**)",
       "Read(C:\\WORK\\Artifex.AI\\app/**)",
       "Read(C:\\WORK\\Artifex.AI\\app/**)",
-      "Read(C:\\WORK\\Artifex.AI\\app\\renderer/**)"
+      "Read(C:\\WORK\\Artifex.AI\\app\\renderer/**)",
+      "WebFetch(domain:github.com)",
+      "Bash(pip uninstall:*)",
+      "Bash(start C:WORKArtifexProtest_app.html)",
+      "Bash(start \"C:\\WORK\\ArtifexPro\\test_app.html\")",
+      "Bash(nvidia-smi:*)",
+      "Bash(curl:*)",
+      "Bash(start msedge http://localhost:3000)",
+      "Bash(start chrome http://localhost:3000)",
+      "Bash(start outputs6f7b41af-de42-4503-a3ab-d653fecada08_distributed.mp4)",
+      "Bash(start outputs)",
+      "Read(C:\\Users\\choon\\OneDrive\\바탕 화면/**)"
     ],
     "deny": [],
     "ask": []

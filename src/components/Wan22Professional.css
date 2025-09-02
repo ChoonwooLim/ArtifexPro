@@ -1,0 +1,456 @@
+/* WAN2.2 Professional Studio Styles */
+
+.wan22-professional {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #0f0f1e 100%);
+  padding: 24px;
+  color: #fff;
+}
+
+/* Header */
+.wan22-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.app-title {
+  margin: 0 !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 32px !important;
+  font-weight: 700 !important;
+}
+
+.app-subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 12px;
+}
+
+/* Model Selector */
+.model-selector-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  margin-bottom: 24px;
+}
+
+.model-radio-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.model-radio-button {
+  height: auto !important;
+  padding: 16px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s !important;
+}
+
+.model-radio-button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+}
+
+.model-radio-button.ant-radio-button-wrapper-checked {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2)) !important;
+  border-color: #667eea !important;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+.model-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.model-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+}
+
+.model-specs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.model-features {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* Main Content Layout */
+.wan22-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1400px) {
+  .wan22-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Panels */
+.left-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Cards */
+.input-card,
+.settings-card,
+.progress-card,
+.console-card,
+.preview-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(10px);
+}
+
+.input-card h4,
+.settings-card h4,
+.progress-card h4,
+.console-card h4,
+.preview-card h4 {
+  color: #fff !important;
+  margin-bottom: 20px !important;
+  font-weight: 600 !important;
+}
+
+/* Input Groups */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.input-group .required {
+  color: #ff4d4f;
+}
+
+.prompt-input {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  color: #fff !important;
+  font-size: 14px !important;
+}
+
+.prompt-input:focus,
+.prompt-input:hover {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Settings */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting-item label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.setting-group {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.setting-group h5 {
+  color: #fff !important;
+  margin-bottom: 12px !important;
+}
+
+/* Optimization Settings */
+.optimization-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.optimization-settings .ant-switch {
+  width: 180px;
+}
+
+.info-box {
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.info-box h5 {
+  color: #667eea !important;
+  margin-bottom: 8px !important;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.generate-button {
+  flex: 1;
+  height: 48px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4) !important;
+  transition: all 0.3s !important;
+}
+
+.generate-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+}
+
+.generate-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Progress */
+.progress-info {
+  margin-top: 16px;
+}
+
+.progress-status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+/* Console */
+.console-log {
+  background: #0a0a0f !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  color: #00ff88 !important;
+  font-family: 'Consolas', 'Monaco', monospace !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  padding: 16px !important;
+}
+
+/* Video Preview */
+.video-preview {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.video-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Ant Design Overrides */
+.wan22-professional .ant-input,
+.wan22-professional .ant-input-number,
+.wan22-professional .ant-select-selector {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+.wan22-professional .ant-input:hover,
+.wan22-professional .ant-input-number:hover,
+.wan22-professional .ant-select-selector:hover {
+  border-color: #667eea !important;
+}
+
+.wan22-professional .ant-input:focus,
+.wan22-professional .ant-input-number:focus,
+.wan22-professional .ant-select-focused .ant-select-selector {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+}
+
+.wan22-professional .ant-select-item {
+  color: #fff !important;
+}
+
+.wan22-professional .ant-select-dropdown {
+  background: #1a1a2e !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.wan22-professional .ant-select-item-option-active {
+  background: rgba(102, 126, 234, 0.2) !important;
+}
+
+.wan22-professional .ant-select-item-option-selected {
+  background: rgba(102, 126, 234, 0.3) !important;
+}
+
+.wan22-professional .ant-slider-track {
+  background: linear-gradient(90deg, #667eea, #764ba2) !important;
+}
+
+.wan22-professional .ant-slider-handle {
+  border-color: #667eea !important;
+  background: #667eea !important;
+}
+
+.wan22-professional .ant-slider-mark-text {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.wan22-professional .ant-switch-checked {
+  background: linear-gradient(90deg, #667eea, #764ba2) !important;
+}
+
+.wan22-professional .ant-tabs-tab {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.wan22-professional .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #667eea !important;
+}
+
+.wan22-professional .ant-tabs-ink-bar {
+  background: linear-gradient(90deg, #667eea, #764ba2) !important;
+}
+
+.wan22-professional .ant-progress-bg {
+  background: linear-gradient(90deg, #108ee9, #87d068) !important;
+}
+
+.wan22-professional .ant-btn {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s !important;
+}
+
+.wan22-professional .ant-btn:hover {
+  transform: translateY(-1px);
+}
+
+.wan22-professional .ant-upload-wrapper {
+  width: 100%;
+}
+
+.wan22-professional .ant-upload-select {
+  width: 100%;
+}
+
+.wan22-professional .ant-upload-select button {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.wan22-professional {
+  animation: gradient-shift 15s ease infinite;
+  background-size: 200% 200%;
+}
+
+/* Loading State */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  border-radius: 16px;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
