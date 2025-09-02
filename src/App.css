@@ -1,0 +1,88 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+/* React Flow custom styles */
+.react-flow__node {
+  font-size: 12px;
+}
+
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background-color: #1890ff;
+  border: 2px solid #fff;
+}
+
+.react-flow__handle-connecting {
+  background-color: #ff4d4f;
+}
+
+.react-flow__edge-path {
+  stroke: #1890ff;
+  stroke-width: 2;
+}
+
+/* Ant Design overrides */
+.ant-layout {
+  background: #0a0a0a;
+}
+
+.ant-layout-header {
+  background: #1a1a1a !important;
+  border-bottom: 1px solid #333;
+}
+
+.ant-layout-sider {
+  background: #141414 !important;
+  border-right: 1px solid #333;
+}
+
+.ant-card {
+  background: #1a1a1a;
+  border-color: #333;
+}
+
+.ant-card-head {
+  border-bottom-color: #333;
+}
+
+/* Timeline styles */
+canvas {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

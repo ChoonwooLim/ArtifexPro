@@ -31,7 +31,19 @@
       "Read(C:\\Users\\choon/**)",
       "Bash(jq:*)",
       "Read(C:\\Users\\choon/**)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(ssh:*)",
+      "Bash(dir:*)",
+      "Bash(echo:*)",
+      "Bash(scp:*)",
+      "Bash(powershell:*)",
+      "Bash(start http://localhost:3000)",
+      "Bash(pip install:*)",
+      "Read(C:\\WORK\\Artifex.AI\\app/**)",
+      "Read(C:\\WORK\\Artifex.AI\\app/**)",
+      "Read(C:\\WORK\\Artifex.AI\\app/**)",
+      "Read(C:\\WORK\\Artifex.AI\\app/**)",
+      "Read(C:\\WORK\\Artifex.AI\\app\\renderer/**)"
     ],
     "deny": [],
     "ask": []
