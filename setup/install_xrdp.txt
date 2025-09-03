@@ -1,0 +1,25 @@
+# Pop!_OS 원격 데스크톱 설치 명령
+# SSH로 접속 후 아래 명령 실행:
+
+ssh popOS
+
+# 1. xRDP 설치
+sudo apt update
+sudo apt install -y xrdp
+# 암호: Jiyeon71391796!
+
+# 2. xRDP 서비스 시작
+sudo systemctl enable xrdp
+sudo systemctl start xrdp
+
+# 3. 방화벽 설정 (필요시)
+sudo ufw allow 3389/tcp
+
+# 4. 상태 확인
+sudo systemctl status xrdp
+
+# 5. 설치 완료 후 Windows에서:
+# - 바탕화면의 PopOS_Desktop.rdp 더블클릭
+# - 또는 Win+R → mstsc → 10.0.0.2 입력
+# - 사용자: stevenlim
+# - 암호: Jiyeon71391796!

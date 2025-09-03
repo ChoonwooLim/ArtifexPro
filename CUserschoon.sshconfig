@@ -1,0 +1,4 @@
+Host popOS
+    HostName 192.168.1.100
+    User stevenlim
+    Port 22

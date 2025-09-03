@@ -4,7 +4,7 @@
 
 const API_BASE = 'http://localhost:8001';
 const DISTRIBUTED_API_BASE = 'http://localhost:8003'; // 분산 GPU API
-const POPOS_API_BASE = 'http://192.168.219.150:8002'; // Pop!_OS GPU 서버
+const POPOS_API_BASE = 'http://10.0.0.2:8002'; // Pop!_OS GPU 서버
 
 export interface Job {
   id: string;
