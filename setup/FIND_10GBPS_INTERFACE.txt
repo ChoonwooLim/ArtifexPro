@@ -1,0 +1,39 @@
+=============================================
+⚠️ enp71s0이 10Gbps 카드가 아닌 것 같습니다
+=============================================
+
+현재 Pop!_OS 인터페이스:
+- enp71s0: 10.0.0.2 설정됨 (연결 안 됨)
+- enp1s0f0: DOWN (Intel X550 10Gbps 가능성!)
+- enp1s0f1: UP (Intel X550 10Gbps 가능성!)
+
+=============================================
+Pop!_OS에서 실행하세요:
+=============================================
+
+【빠른 해결법 - 모든 인터페이스 테스트】
+----------------------------------------
+복사/붙여넣기:
+
+for IFACE in enp1s0f0 enp1s0f1 enp69s0 enp71s0; do
+    echo "Testing: $IFACE"
+    sudo ip addr flush dev $IFACE 2>/dev/null
+    sudo ip addr add 10.0.0.2/24 dev $IFACE 2>/dev/null
+    sudo ip link set $IFACE up 2>/dev/null
+    
+    if ping -c 1 -W 1 10.0.0.1 > /dev/null 2>&1; then
+        echo "✅ SUCCESS! $IFACE is the 10Gbps card!"
+        ip addr show $IFACE | grep inet
+        break
+    else
+        echo "❌ Not $IFACE"
+        sudo ip addr del 10.0.0.2/24 dev $IFACE 2>/dev/null
+    fi
+done
+
+=============================================
+
+성공하면 Windows에서:
+ssh stevenlim@10.0.0.2
+
+=============================================

@@ -1,0 +1,83 @@
+=============================================
+⚠️ 연결이 안 됩니다 - Pop!_OS 확인 필요
+=============================================
+
+Windows 설정: ✅ OK (10.0.0.1)
+Pop!_OS 연결: ❌ 실패
+
+=============================================
+Pop!_OS에서 확인할 것:
+=============================================
+
+【1. IP 설정 확인】
+ip addr show | grep "10.0.0"
+
+결과가 없으면 다시 설정:
+sudo ip addr add 10.0.0.2/24 dev enp5s0
+(enp5s0는 실제 인터페이스 이름으로 변경)
+
+--------------------------------------------
+
+【2. 네트워크 인터페이스 확인】
+ip link show
+
+10Gbps 카드 찾기 (보통 enp로 시작)
+예: enp5s0, enp1s0, enp2s0 등
+
+--------------------------------------------
+
+【3. 올바른 인터페이스에 IP 설정】
+# 인터페이스 이름 확인 (예: enp5s0)
+IFACE=enp5s0  # 실제 이름으로 변경
+
+# IP 설정
+sudo ip addr flush dev $IFACE
+sudo ip addr add 10.0.0.2/24 dev $IFACE
+sudo ip link set $IFACE up
+
+# 확인
+ip addr show $IFACE
+
+--------------------------------------------
+
+【4. SSH 서비스 확인】
+sudo systemctl status ssh
+
+실행 중이 아니면:
+sudo systemctl start ssh
+sudo systemctl enable ssh
+
+--------------------------------------------
+
+【5. 방화벽 비활성화】
+sudo ufw disable
+
+또는 특정 IP만 허용:
+sudo ufw allow from 10.0.0.1
+
+--------------------------------------------
+
+【6. 연결 테스트 (Pop!_OS에서)】
+ping 10.0.0.1
+
+성공하면 Windows에서 다시:
+ssh stevenlim@10.0.0.2
+
+=============================================
+
+【한 번에 실행 (인터페이스 이름 확인 후)】
+--------------------------------------------
+Pop!_OS에서 (enp5s0를 실제 이름으로 변경):
+
+echo "Jiyeon71391796!" | sudo -S bash -c '
+IFACE=enp5s0  # <- 여기를 실제 인터페이스로 변경!
+ip addr flush dev $IFACE
+ip addr add 10.0.0.2/24 dev $IFACE
+ip link set $IFACE up
+systemctl restart ssh
+ufw disable
+echo "설정 완료!"
+ip addr show $IFACE | grep inet
+'
+
+=============================================

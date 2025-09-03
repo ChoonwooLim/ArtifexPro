@@ -1,0 +1,86 @@
+=============================================
+✅ SSH는 실행 중! IP 설정만 하면 됩니다!
+=============================================
+
+Pop!_OS 터미널에서 실행:
+
+【1. 현재 IP 확인】
+ip addr show | grep "10.0.0"
+
+만약 없으면 계속 진행 ↓
+
+=============================================
+
+【2. 네트워크 인터페이스 찾기】
+ip link show
+
+결과 예시:
+1: lo: <LOOPBACK...
+2: enp5s0: <BROADCAST...   ← 이것이 10Gbps 카드
+3: wlp6s0: <BROADCAST...   ← 무선
+
+=============================================
+
+【3. IP 설정 (enp5s0를 실제 인터페이스로 변경)】
+
+방법 A: 임시 설정 (재부팅 시 초기화)
+----------------------------------------
+sudo ip addr add 10.0.0.2/24 dev enp5s0
+sudo ip link set enp5s0 up
+ip addr show enp5s0 | grep inet
+
+방법 B: 영구 설정 (Netplan)
+----------------------------------------
+echo "Jiyeon71391796!" | sudo -S bash -c 'cat > /etc/netplan/10-direct.yaml << EOF
+network:
+  version: 2
+  ethernets:
+    enp5s0:  # <- 실제 인터페이스 이름으로 변경!
+      dhcp4: no
+      addresses: [10.0.0.2/24]
+EOF
+netplan apply'
+
+=============================================
+
+【4. 가장 간단한 방법 (인터페이스 자동 찾기)】
+----------------------------------------
+Pop!_OS 터미널에 복사:
+
+for IFACE in $(ip link show | grep -E "^[0-9]+: enp" | cut -d: -f2); do 
+    echo "Testing interface: $IFACE"
+    sudo ip addr flush dev $IFACE
+    sudo ip addr add 10.0.0.2/24 dev $IFACE
+    sudo ip link set $IFACE up
+    if ping -c 1 -W 1 10.0.0.1 > /dev/null 2>&1; then
+        echo "SUCCESS! Interface $IFACE connected to Windows"
+        ip addr show $IFACE | grep inet
+        break
+    fi
+done
+
+=============================================
+
+【5. 수동 설정 (인터페이스 이름 확인 후)】
+----------------------------------------
+# 1단계: 인터페이스 목록 확인
+ip link show | grep enp
+
+# 2단계: 올바른 인터페이스 선택 (예: enp5s0)
+IFACE=enp5s0  # <- 여기를 수정!
+
+# 3단계: IP 설정
+sudo ip addr flush dev $IFACE
+sudo ip addr add 10.0.0.2/24 dev $IFACE  
+sudo ip link set $IFACE up
+
+# 4단계: 확인
+ip addr show $IFACE | grep inet
+ping -c 3 10.0.0.1
+
+=============================================
+
+설정 완료 후 Windows에서:
+ssh stevenlim@10.0.0.2
+
+=============================================
